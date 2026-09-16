@@ -1,0 +1,32 @@
+name: CoinGlass Gainers Monitor
+
+on:
+  schedule:
+    - cron: "0 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install playwright
+      - run: playwright install chromium --with-deps
+      - run: python monitor.py
+        env:
+          TZ: Asia/Shanghai
+      - run: |
+          git config user.email "bot@no.reply"
+          git config user.name "github-bot"
+          git add gainers_data.json gainers_report.txt docs/index.html monitor.log 2>/dev/null
+          git diff --staged --quiet || git commit -m "auto update gainers data"
+          git push
