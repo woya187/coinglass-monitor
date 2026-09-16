@@ -321,6 +321,7 @@ def generate_html_report(gainers, data):
             <div class="coin-info">
                 <div class="coin-name">{symbol} {status_badge}</div>
                 <div class="coin-price">{format_price(price)}</div>
+                <div class="coin-duration">⏱ 已在榜 {duration_str}</div>
             </div>
             <div class="metrics">
                 <div class="metric">
@@ -452,6 +453,12 @@ body {{
     color: #8899a6;
     margin-top: 2px;
 }}
+.coin-duration {{
+    font-size: 11px;
+    color: #60a5fa;
+    margin-top: 3px;
+    font-weight: 500;
+}}
 .badge {{
     font-size: 10px;
     padding: 2px 6px;
@@ -514,6 +521,7 @@ body {{
 }}
 @media (min-width: 600px) {{
     body {{ max-width: 700px; margin: 0 auto; }}
+    .coin-duration {{ display: none; }}
     .time-info {{
         display: flex;
         flex-direction: column;
@@ -587,3 +595,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
