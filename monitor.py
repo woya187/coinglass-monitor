@@ -98,42 +98,22 @@ async def fetch_gainers():
             except Exception:
                 pass
 
-            # 从 __NEXT_DATA__ 提取页面初始数据
-            next_data = await page.evaluate("""() => {
-                const script = document.getElementById('__NEXT_DATA__');
-                if (!script) return {error: 'no __NEXT_DATA__'};
-                const raw = script.textContent;
-                try {
-                    const data = JSON.parse(raw);
-                    const pp = data.props?.pageProps || {};
-                    // 搜索包含binance的所有路径
-                    const binancePaths = [];
-                    function searchBinance(obj, path, depth) {
-                        if (depth > 8 || !obj || typeof obj !== 'object') return;
-                        for (const key of Object.keys(obj)) {
-                            const val = obj[key];
-                            const curPath = path + '.' + key;
-                            if (typeof val === 'string' && val.toLowerCase().includes('binance')) {
-                                binancePaths.push({path: curPath, value: val.substring(0,100)});
-                            }
-                            if (typeof val === 'object' && val !== null) {
-                                searchBinance(val, curPath, depth + 1);
-                            }
-                        }
-                    }
-                    searchBinance(data, 'root', 0);
-                    return {
-                        topKeys: Object.keys(data),
-                        pagePropsKeys: Object.keys(pp),
-                        pagePropsSize: JSON.stringify(pp).length,
-                        binancePaths: binancePaths.slice(0,10),
-                        rawSize: raw.length
-                    };
-                } catch(e) {
-                    return {error: e.message, rawSize: raw.length, rawStart: raw.substring(0,200)};
-                }
-            }""")
-            log(f"[NEXT_DATA] {json.dumps(next_data, ensure_ascii=False)[:2000]}")
+            # 分别获取两个table的行（rc-table固定列+滚动列）
+            all_tables = await page.query_selector_all("table")
+            log(f"[表格分析] 页面共 {len(all_tables)} 个table")
+            for ti, table in enumerate(all_tables):
+                rows = await table.query_selector_all("tbody tr")
+                if len(rows) > 0:
+                    first_row_html = await rows[0].inner_html()
+                    # 检查是否包含交易所图标
+                    ex_icons = re.findall(r'static/exchanges/([a-z0-9_-]+)\.png', first_row_html.lower())
+                    log(f"[表格分析] table[{ti}] 行数={len(rows)} 首行HTML长度={len(first_row_html)} 交易所图标={ex_icons}")
+                    if len(first_row_html) > 400:
+                        log(f"[表格分析] table[{ti}] 首行HTML片段: {first_row_html[:600]}")
+
+            # 获取所有table的所有行
+            all_rows = await page.query_selector_all("table tbody tr")
+            log(f"[表格分析] 所有table共 {len(all_rows)} 行")
 
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
