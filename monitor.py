@@ -287,8 +287,8 @@ def update_and_report(gainers, data):
     snapshot = {
         "time": now_str,
         "gainers": [
-            {"rank": r, "symbol": s, "price": p, "change": c, "volume": v}
-            for r, s, p, c, v in gainers
+            {"rank": r, "symbol": s, "price": p, "change": c, "volume": v, "exchange": e}
+            for r, s, p, c, v, e in gainers
         ]
     }
     data.setdefault("history", []).append(snapshot)
