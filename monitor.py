@@ -102,33 +102,35 @@ async def fetch_gainers():
             next_data = await page.evaluate("""() => {
                 const script = document.getElementById('__NEXT_DATA__');
                 if (!script) return {error: 'no __NEXT_DATA__'};
+                const raw = script.textContent;
                 try {
-                    const data = JSON.parse(script.textContent);
+                    const data = JSON.parse(raw);
                     const pp = data.props?.pageProps || {};
-                    // 递归搜索包含涨幅数据的键
-                    const result = {};
-                    function find(obj, path, depth) {
-                        if (depth > 6 || !obj || typeof obj !== 'object') return;
+                    // 搜索包含binance的所有路径
+                    const binancePaths = [];
+                    function searchBinance(obj, path, depth) {
+                        if (depth > 8 || !obj || typeof obj !== 'object') return;
                         for (const key of Object.keys(obj)) {
                             const val = obj[key];
-                            if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'object') {
-                                const first = val[0];
-                                const keys = Object.keys(first).join(',');
-                                if (keys.includes('symbol') || keys.includes('change') || keys.includes('price') || keys.includes('exchange')) {
-                                    result[path + '.' + key] = {count: val.length, firstKeys: keys, sample: JSON.stringify(first).substring(0,300)};
-                                }
+                            const curPath = path + '.' + key;
+                            if (typeof val === 'string' && val.toLowerCase().includes('binance')) {
+                                binancePaths.push({path: curPath, value: val.substring(0,100)});
                             }
                             if (typeof val === 'object' && val !== null) {
-                                find(val, path + '.' + key, depth + 1);
+                                searchBinance(val, curPath, depth + 1);
                             }
                         }
                     }
-                    find(pp, 'pageProps', 0);
-                    // 也搜索顶层
-                    find(data, 'root', 0);
-                    return result;
+                    searchBinance(data, 'root', 0);
+                    return {
+                        topKeys: Object.keys(data),
+                        pagePropsKeys: Object.keys(pp),
+                        pagePropsSize: JSON.stringify(pp).length,
+                        binancePaths: binancePaths.slice(0,10),
+                        rawSize: raw.length
+                    };
                 } catch(e) {
-                    return {error: e.message};
+                    return {error: e.message, rawSize: raw.length, rawStart: raw.substring(0,200)};
                 }
             }""")
             log(f"[NEXT_DATA] {json.dumps(next_data, ensure_ascii=False)[:2000]}")
