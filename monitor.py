@@ -10,6 +10,7 @@ import asyncio
 import json
 import os
 import sys
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from playwright.async_api import async_playwright
 
@@ -65,7 +66,54 @@ async def fetch_gainers():
         page = await context.new_page()
 
         try:
-            log("正在访问 CoinGlass 涨跌榜页面...")
+            # ===== 第一步：获取币安永续合约品种列表 =====
+            binance_symbols = set()
+            api_test_results = []
+
+            # 测试多个币安 API 端点
+            test_endpoints = [
+                ("fapi_USDT", "https://fapi.binance.com/fapi/v1/exchangeInfo"),
+                ("dapi_COIN", "https://dapi.binance.com/dapi/v1/exchangeInfo"),
+                ("data-api_spot", "https://data-api.binance.vision/api/v3/exchangeInfo"),
+                ("api_spot", "https://api.binance.com/api/v3/exchangeInfo"),
+            ]
+            for name, url in test_endpoints:
+                try:
+                    req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
+                    with urllib.request.urlopen(req, timeout=10) as resp:
+                        status = resp.status
+                        body = resp.read().decode("utf-8", errors="replace")
+                        data = json.loads(body)
+                        symbols = data.get("symbols", [])
+                        # 提取基础币种
+                        base_assets = set()
+                        for s in symbols:
+                            if name == "fapi_USDT":
+                                # USDT-M 永续：只取 PERPETUAL 合约
+                                if s.get("contractType") == "PERPETUAL" or s.get("status") == "TRADING":
+                                    base_assets.add(s.get("baseAsset", ""))
+                            elif name == "dapi_COIN":
+                                # COIN-M 永续：contractType 为 PERPETUAL
+                                if s.get("contractType") == "PERPETUAL":
+                                    base_assets.add(s.get("baseAsset", ""))
+                            else:
+                                # 现货：所有 TRADING 交易对的基础资产
+                                if s.get("status") == "TRADING":
+                                    base_assets.add(s.get("baseAsset", ""))
+                        base_assets.discard("")
+                        api_test_results.append(f"{name}: HTTP{status}, 交易对{len(symbols)}, 基础币种{len(base_assets)}")
+                        if name in ("fapi_USDT", "dapi_COIN"):
+                            binance_symbols.update(base_assets)
+                except Exception as e:
+                    api_test_results.append(f"{name}: 失败 - {type(e).__name__}: {str(e)[:80]}")
+
+            log(f"[币安API测试] {'; '.join(api_test_results)}")
+            log(f"[币安API测试] 永续合约品种总数: {len(binance_symbols)}")
+            if binance_symbols:
+                log(f"[币安API测试] 样例: {sorted(list(binance_symbols))[:20]}")
+
+            # ===== 第二步：抓取 CoinGlass 全平台涨幅前50 =====
+            log("正在访问 CoinGlass 涨跌榜页面（全平台）...")
             await page.goto(
                 "https://www.coinglass.com/zh/gainers-losers",
                 wait_until="networkidle",
@@ -82,70 +130,8 @@ async def fetch_gainers():
             except Exception:
                 pass
 
-            # 点击交易所筛选按钮，选择币安
-            try:
-                exchange_btn = page.get_by_role("button", name="交易所")
-                if await exchange_btn.count() > 0:
-                    await exchange_btn.first.click()
-                    await page.wait_for_timeout(1500)
-                    log("已点击交易所筛选按钮")
-
-                    # 输出下拉菜单中的所有选项
-                    menu_items = await page.evaluate("""() => {
-                        const items = [];
-                        // 搜索所有可见的菜单项
-                        document.querySelectorAll('[role="option"], [role="menuitem"], li, .MuiMenuItem-root, [class*="menu-item"], [class*="option"]').forEach(el => {
-                            const text = (el.textContent || '').trim();
-                            if (text && text.length < 30 && el.offsetParent !== null) {
-                                items.push(text);
-                            }
-                        });
-                        return [...new Set(items)].slice(0, 30);
-                    }""")
-                    log(f"[交易所菜单] 选项: {menu_items}")
-
-                    # 尝试点击币安
-                    binance_item = page.get_by_text("币安", exact=False)
-                    if await binance_item.count() > 0:
-                        await binance_item.first.click()
-                        await page.wait_for_timeout(3000)
-                        log("已选择币安")
-                    else:
-                        # 尝试英文Binance
-                        binance_en = page.get_by_text("Binance", exact=False)
-                        if await binance_en.count() > 0:
-                            await binance_en.first.click()
-                            await page.wait_for_timeout(3000)
-                            log("已选择Binance(英文)")
-                        else:
-                            log("未找到币安选项，按ESC关闭菜单")
-                            await page.keyboard.press("Escape")
-                else:
-                    log("未找到交易所筛选按钮")
-            except Exception as e:
-                log(f"交易所筛选失败: {e}")
-
-            # 选择币安后等待页面数据刷新
-            try:
-                await page.wait_for_load_state("networkidle", timeout=15000)
-            except Exception:
-                pass
-            await page.wait_for_timeout(2000)
-
-            # 验证筛选结果：输出前5个币种
-            try:
-                verify_rows = await page.query_selector_all("table tbody tr")
-                verify_symbols = []
-                for r in verify_rows[:5]:
-                    cells = await r.query_selector_all("td")
-                    if len(cells) >= 2:
-                        verify_symbols.append((await cells[1].inner_text()).strip())
-                log(f"[币安筛选验证] 前5币种: {verify_symbols}")
-            except Exception:
-                pass
-
             rows = await page.query_selector_all("table tbody tr")
-            gainers = []
+            all_gainers = []
 
             for row in rows:
                 cells = await row.query_selector_all("td")
@@ -167,12 +153,29 @@ async def fetch_gainers():
                     change = float(change_str)
                     volume = cell_texts[4] if len(cells) > 4 else ""
 
-                    if change > 0 and rank <= TOP_N:
-                        gainers.append((rank, symbol, price, change, volume))
+                    # 抓取全平台前50
+                    if change > 0 and rank <= 50:
+                        all_gainers.append((rank, symbol, price, change, volume))
                 except (ValueError, IndexError):
                     continue
 
-            log(f"成功获取币安永续合约涨幅榜 Top{len(gainers)}")
+            log(f"全平台涨幅前50抓取: {len(all_gainers)} 个")
+
+            # ===== 第三步：过滤出币安永续合约品种，取前10 =====
+            if binance_symbols:
+                binance_gainers = [g for g in all_gainers if g[1] in binance_symbols]
+                non_binance = [g[1] for g in all_gainers if g[1] not in binance_symbols]
+                log(f"前50中币安永续合约品种: {len(binance_gainers)} 个")
+                if non_binance:
+                    log(f"过滤掉非币安品种: {', '.join(non_binance[:20])}")
+            else:
+                # 币安 API 全部失败时的兜底：不过滤
+                log("警告: 币安 API 全部失败，无法过滤，使用全平台前10")
+                binance_gainers = all_gainers
+
+            # 重新排名，取前 TOP_N
+            gainers = [(i + 1, g[1], g[2], g[3], g[4]) for i, g in enumerate(binance_gainers[:TOP_N])]
+            log(f"最终涨幅榜 Top{len(gainers)}（全平台前50中的币安永续合约）")
             return gainers
 
         except Exception as e:
