@@ -81,13 +81,27 @@ async def fetch_gainers():
         page.on("response", handle_response)
 
         try:
-            log("正在访问 CoinGlass 涨跌榜页面...")
+            log("正在访问 CoinGlass 涨跌榜页面（筛选币安）...")
             await page.goto(
-                "https://www.coinglass.com/zh/gainers-losers",
+                "https://www.coinglass.com/zh/gainers-losers?ex=binance",
                 wait_until="networkidle",
                 timeout=60000
             )
             await page.wait_for_timeout(3000)
+
+            # 验证URL筛选是否生效：输出页面标题和前5个币种
+            try:
+                page_title = await page.title()
+                first_rows = await page.query_selector_all("table tbody tr")
+                top_symbols = []
+                for r in first_rows[:8]:
+                    cells = await r.query_selector_all("td")
+                    if len(cells) >= 2:
+                        sym = await cells[1].inner_text()
+                        top_symbols.append(sym.strip())
+                log(f"[URL筛选验证] 标题={page_title} 前5币种={top_symbols[:5]}")
+            except Exception as e:
+                log(f"[URL筛选验证] 失败: {e}")
 
             # 确保选中24小时标签
             try:
