@@ -81,27 +81,13 @@ async def fetch_gainers():
         page.on("response", handle_response)
 
         try:
-            log("正在访问 CoinGlass 涨跌榜页面（筛选币安）...")
+            log("正在访问 CoinGlass 涨跌榜页面...")
             await page.goto(
-                "https://www.coinglass.com/zh/gainers-losers?ex=binance",
+                "https://www.coinglass.com/zh/gainers-losers",
                 wait_until="networkidle",
                 timeout=60000
             )
             await page.wait_for_timeout(3000)
-
-            # 验证URL筛选是否生效：输出页面标题和前5个币种
-            try:
-                page_title = await page.title()
-                first_rows = await page.query_selector_all("table tbody tr")
-                top_symbols = []
-                for r in first_rows[:8]:
-                    cells = await r.query_selector_all("td")
-                    if len(cells) >= 2:
-                        sym = await cells[1].inner_text()
-                        top_symbols.append(sym.strip())
-                log(f"[URL筛选验证] 标题={page_title} 前5币种={top_symbols[:5]}")
-            except Exception as e:
-                log(f"[URL筛选验证] 失败: {e}")
 
             # 确保选中24小时标签
             try:
@@ -112,22 +98,29 @@ async def fetch_gainers():
             except Exception:
                 pass
 
-            # 分别获取两个table的行（rc-table固定列+滚动列）
-            all_tables = await page.query_selector_all("table")
-            log(f"[表格分析] 页面共 {len(all_tables)} 个table")
-            for ti, table in enumerate(all_tables):
-                rows = await table.query_selector_all("tbody tr")
-                if len(rows) > 0:
-                    first_row_html = await rows[0].inner_html()
-                    # 检查是否包含交易所图标
-                    ex_icons = re.findall(r'static/exchanges/([a-z0-9_-]+)\.png', first_row_html.lower())
-                    log(f"[表格分析] table[{ti}] 行数={len(rows)} 首行HTML长度={len(first_row_html)} 交易所图标={ex_icons}")
-                    if len(first_row_html) > 400:
-                        log(f"[表格分析] table[{ti}] 首行HTML片段: {first_row_html[:600]}")
-
-            # 获取所有table的所有行
-            all_rows = await page.query_selector_all("table tbody tr")
-            log(f"[表格分析] 所有table共 {len(all_rows)} 行")
+            # 搜索页面上的交易所筛选器
+            filter_info = await page.evaluate("""() => {
+                const results = [];
+                // 搜索所有包含交易所相关文字的可点击元素
+                const allElements = document.querySelectorAll('button, a, select, [role="button"], [class*="filter"], [class*="select"], [class*="dropdown"], [class*="tab"]');
+                allElements.forEach(el => {
+                    const text = (el.textContent || '').trim().substring(0, 50);
+                    const cls = (el.className || '').toString().substring(0, 80);
+                    if (text && (text.includes('交易所') || text.includes('Binance') || text.includes('币安') || text.includes('全部') || text.includes('All') || cls.toLowerCase().includes('exchange') || cls.toLowerCase().includes('filter'))) {
+                        results.push({tag: el.tagName, text: text, class: cls, id: el.id});
+                    }
+                });
+                // 搜索所有select选项
+                const selects = document.querySelectorAll('select');
+                const selectOptions = [];
+                selects.forEach(s => {
+                    const opts = [];
+                    s.querySelectorAll('option').forEach(o => opts.push(o.value + ':' + o.text));
+                    selectOptions.push({id: s.id, name: s.name, options: opts.slice(0,10)});
+                });
+                return {clickable: results.slice(0,20), selects: selectOptions};
+            }""")
+            log(f"[筛选器] {json.dumps(filter_info, ensure_ascii=False)[:2000]}")
 
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
