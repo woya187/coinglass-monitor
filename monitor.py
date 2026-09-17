@@ -172,10 +172,10 @@ def update_and_report(gainers, data):
     lines.append("=" * 100)
     lines.append("")
     lines.append(
-        f"{'排名':<4} {'币种':<14} {'价格':<14} {'24h涨幅':<10} "
+        f"{'排名':<4} {'币种':<14} {'现价':<14} {'上榜价':<14} {'24h涨幅':<10} "
         f"{'首次上榜时间':<18} {'已上榜时长':<12} {'上榜后涨幅':<10} {'状态'}"
     )
-    lines.append("-" * 100)
+    lines.append("-" * 110)
 
     for rank, symbol, price, change, volume in gainers:
         current_symbols.add(symbol)
@@ -223,7 +223,7 @@ def update_and_report(gainers, data):
         status = "新上榜" if is_new else "持续在榜"
 
         lines.append(
-            f"{rank:<4} {symbol:<14} {format_price(price):<14} {change:+.2f}%{'':<4} "
+            f"{rank:<4} {symbol:<14} {format_price(price):<14} {format_price(first_price):<14} {change:+.2f}%{'':<4} "
             f"{coin['first_seen']:<18} {duration_str:<12} {gain_str:<10} {status}"
         )
 
@@ -321,12 +321,16 @@ def generate_html_report(gainers, data):
             <div class="coin-info">
                 <div class="coin-name">{symbol} {status_badge}</div>
                 <div class="coin-price">{format_price(price)}</div>
-                <div class="coin-duration">⏱ 已在榜 {duration_str}</div>
+                <div class="coin-duration">⏱ 已在榜 {duration_str} · 上榜价 {format_price(first_price)}</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
                     <span class="value {change_class}">{change:+.2f}%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">{format_price(first_price)}</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
