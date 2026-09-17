@@ -19,7 +19,7 @@ DATA_FILE = os.path.join(SCRIPT_DIR, "gainers_data.json")
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "gainers_report.txt")
 HTML_FILE = os.path.join(SCRIPT_DIR, "docs", "index.html")
 LOG_FILE = os.path.join(SCRIPT_DIR, "monitor.log")
-TOP_N = 10
+TOP_N = 20
 # ====================================
 
 TZ = timezone(timedelta(hours=8))
@@ -65,8 +65,7 @@ async def fetch_gainers():
         page = await context.new_page()
 
         try:
-            # ===== 第一步：抓取 CoinGlass 全平台涨幅前50 =====
-            log("正在访问 CoinGlass 涨跌榜页面（全平台）...")
+            log("正在访问 CoinGlass 涨跌榜页面...")
             await page.goto(
                 "https://www.coinglass.com/zh/gainers-losers",
                 wait_until="networkidle",
@@ -84,7 +83,7 @@ async def fetch_gainers():
                 pass
 
             rows = await page.query_selector_all("table tbody tr")
-            all_gainers = []
+            gainers = []
 
             for row in rows:
                 cells = await row.query_selector_all("td")
@@ -106,69 +105,12 @@ async def fetch_gainers():
                     change = float(change_str)
                     volume = cell_texts[4] if len(cells) > 4 else ""
 
-                    # 抓取全平台前50
-                    if change > 0 and rank <= 50:
-                        all_gainers.append((rank, symbol, price, change, volume))
+                    if change > 0 and rank <= TOP_N:
+                        gainers.append((rank, symbol, price, change, volume))
                 except (ValueError, IndexError):
                     continue
 
-            log(f"全平台涨幅前50抓取: {len(all_gainers)} 个")
-
-            # ===== 第二步：在同一页面筛选币安，获取币安品种集合 =====
-            binance_symbols = set()
-            try:
-                exchange_btn = page.get_by_role("button", name="交易所")
-                if await exchange_btn.count() > 0:
-                    await exchange_btn.first.click()
-                    await page.wait_for_timeout(1500)
-                    log("已点击交易所筛选按钮")
-
-                    # 点击 Binance（英文）
-                    binance_en = page.get_by_text("Binance", exact=False)
-                    if await binance_en.count() > 0:
-                        await binance_en.first.click()
-                        log("已选择Binance")
-
-                        # 等待页面数据刷新
-                        try:
-                            await page.wait_for_load_state("networkidle", timeout=15000)
-                        except Exception:
-                            pass
-                        await page.wait_for_timeout(2500)
-
-                        # 抓取币安涨幅榜中的所有币种（作为币安品种集合）
-                        binance_rows = await page.query_selector_all("table tbody tr")
-                        for brow in binance_rows:
-                            bcells = await brow.query_selector_all("td")
-                            if len(bcells) >= 2:
-                                bsym = (await bcells[1].inner_text()).strip()
-                                if bsym:
-                                    binance_symbols.add(bsym)
-                        log(f"币安涨幅榜品种数: {len(binance_symbols)}")
-                        if binance_symbols:
-                            log(f"币安品种样例: {sorted(list(binance_symbols))[:15]}")
-                    else:
-                        log("未找到Binance选项")
-                else:
-                    log("未找到交易所筛选按钮")
-            except Exception as e:
-                log(f"币安筛选失败: {e}")
-
-            # ===== 第三步：从全平台前50中过滤出币安品种，取前10 =====
-            if binance_symbols:
-                binance_gainers = [g for g in all_gainers if g[1] in binance_symbols]
-                non_binance = [g[1] for g in all_gainers if g[1] not in binance_symbols]
-                log(f"前50中币安永续合约品种: {len(binance_gainers)} 个")
-                if non_binance:
-                    log(f"过滤掉非币安品种: {', '.join(non_binance[:20])}")
-            else:
-                # 币安筛选失败时的兜底：不过滤
-                log("警告: 币安筛选失败，无法过滤，使用全平台前10")
-                binance_gainers = all_gainers
-
-            # 重新排名，取前 TOP_N
-            gainers = [(i + 1, g[1], g[2], g[3], g[4]) for i, g in enumerate(binance_gainers[:TOP_N])]
-            log(f"最终涨幅榜 Top{len(gainers)}（全平台前50中的币安永续合约）")
+            log(f"成功获取涨幅榜 Top{len(gainers)}")
             return gainers
 
         except Exception as e:
