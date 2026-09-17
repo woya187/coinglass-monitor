@@ -302,7 +302,7 @@ def generate_html_report(gainers, data):
     """生成手机端友好的 HTML 报告"""
     now = get_now()
     now_str = get_now_str()
-    current_symbols = set(s for _, s, _, _, _ in gainers)
+    current_symbols = set(s for _, s, _, _, _, _ in gainers)
 
     rows_html = []
     for rank, symbol, price, change, volume, exchange in gainers:
