@@ -9,6 +9,7 @@ CoinGlass 涨幅榜监控脚本 - 云端版 (GitHub Actions)
 import asyncio
 import json
 import os
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 from playwright.async_api import async_playwright
@@ -91,14 +92,16 @@ async def fetch_gainers():
                 if len(cells) < 4:
                     continue
 
-                # 检测该行是否包含币安（Binance）交易所标识
-                row_html = (await row.inner_html()).lower()
-                has_binance = "binance" in row_html
+                # 获取行完整HTML，提取所有交易所图标文件名
+                row_html = await row.inner_html()
+                row_html_lower = row_html.lower()
+                # 提取 static/exchanges/ 后面的文件名
+                exchange_icons = re.findall(r'static/exchanges/([a-z0-9_-]+)\.png', row_html_lower)
+                has_binance = "binance" in row_html_lower or "binance" in exchange_icons
 
-                # 调试：输出前3行的HTML片段，确认交易所标识结构
-                if debug_count < 3:
-                    snippet = row_html.replace("\n", " ")[:400]
-                    log(f"[调试] 行{debug_count+1} 含币安={has_binance} HTML片段: {snippet}")
+                # 调试：输出前5行的交易所图标列表和HTML长度
+                if debug_count < 5:
+                    log(f"[调试] 行{debug_count+1} 交易所图标={exchange_icons} 含币安={has_binance} HTML长度={len(row_html)}")
                     debug_count += 1
 
                 cell_texts = []
@@ -584,8 +587,25 @@ async def main():
 
     gainers = await fetch_gainers()
     if not gainers:
-        log("未能获取涨幅榜数据，本次跳过")
-        sys.exit(1)
+        log("警告：当前涨幅榜无币安永续合约品种上榜，生成本次空报告")
+        # 生成空报告，不退出
+        empty_report = f"{'='*60}\n  CoinGlass 涨幅榜监控报告 | {get_now_str()}\n  （当前涨幅榜无币安永续合约品种上榜）\n{'='*60}\n"
+        try:
+            with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+                f.write(empty_report)
+        except IOError:
+            pass
+        data = load_data()
+        try:
+            html_report = generate_html_report([], data)
+            with open(HTML_FILE, "w", encoding="utf-8") as f:
+                f.write(html_report)
+            log("HTML报告已保存（空榜单）")
+        except Exception as e:
+            log(f"生成HTML报告失败: {e}")
+        save_data(data)
+        log("监控任务执行完成（空榜单）")
+        return
 
     data = load_data()
     report = update_and_report(gainers, data)
