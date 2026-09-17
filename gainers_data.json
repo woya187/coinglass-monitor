@@ -238,11 +238,11 @@
       "first_seen": "2026-09-17 00:18:52",
       "first_seen_price": 0.015711,
       "first_seen_change": 25.39,
-      "last_seen": "2026-09-17 09:34:03",
-      "current_price": 0.016589,
-      "current_change": 39.24,
-      "best_rank": 6,
-      "appearances": 3,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.015823,
+      "current_change": 36.46,
+      "best_rank": 1,
+      "appearances": 4,
       "rank_history": [
         {
           "time": "2026-09-17 00:18:52",
@@ -261,6 +261,12 @@
           "rank": 8,
           "price": 0.016589,
           "change": 39.24
+        },
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 1,
+          "price": 0.015823,
+          "change": 36.46
         }
       ]
     },
@@ -645,9 +651,180 @@
           "change": 36.36
         }
       ]
+    },
+    "ROBINCAT": {
+      "symbol": "ROBINCAT",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 0.00244,
+      "first_seen_change": 14.55,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.00244,
+      "current_change": 14.55,
+      "best_rank": 2,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 2,
+          "price": 0.00244,
+          "change": 14.55
+        }
+      ]
+    },
+    "NEAR": {
+      "symbol": "NEAR",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 2.615,
+      "first_seen_change": 12.48,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 2.615,
+      "current_change": 12.48,
+      "best_rank": 3,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 3,
+          "price": 2.615,
+          "change": 12.48
+        }
+      ]
+    },
+    "BEN": {
+      "symbol": "BEN",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 0.000605,
+      "first_seen_change": 11.42,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.000605,
+      "current_change": 11.42,
+      "best_rank": 4,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 4,
+          "price": 0.000605,
+          "change": 11.42
+        }
+      ]
+    },
+    "AXON": {
+      "symbol": "AXON",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 474.06,
+      "first_seen_change": 7.08,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 474.06,
+      "current_change": 7.08,
+      "best_rank": 5,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 5,
+          "price": 474.06,
+          "change": 7.08
+        }
+      ]
+    },
+    "WAVES": {
+      "symbol": "WAVES",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 0.2591,
+      "first_seen_change": 6.31,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.2591,
+      "current_change": 6.31,
+      "best_rank": 6,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 6,
+          "price": 0.2591,
+          "change": 6.31
+        }
+      ]
+    },
+    "STRK": {
+      "symbol": "STRK",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 0.02803,
+      "first_seen_change": 5.42,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.02803,
+      "current_change": 5.42,
+      "best_rank": 7,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 7,
+          "price": 0.02803,
+          "change": 5.42
+        }
+      ]
+    },
+    "H": {
+      "symbol": "H",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 0.09009,
+      "first_seen_change": 3.97,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.09009,
+      "current_change": 3.97,
+      "best_rank": 8,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 8,
+          "price": 0.09009,
+          "change": 3.97
+        }
+      ]
+    },
+    "PONS": {
+      "symbol": "PONS",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 0.6239,
+      "first_seen_change": 3.47,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.6239,
+      "current_change": 3.47,
+      "best_rank": 9,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 9,
+          "price": 0.6239,
+          "change": 3.47
+        }
+      ]
+    },
+    "G": {
+      "symbol": "G",
+      "first_seen": "2026-09-17 10:29:28",
+      "first_seen_price": 0.004281,
+      "first_seen_change": 3.26,
+      "last_seen": "2026-09-17 10:29:28",
+      "current_price": 0.004281,
+      "current_change": 3.26,
+      "best_rank": 10,
+      "appearances": 1,
+      "rank_history": [
+        {
+          "time": "2026-09-17 10:29:28",
+          "rank": 10,
+          "price": 0.004281,
+          "change": 3.26
+        }
+      ]
     }
   },
-  "last_update": "2026-09-17 09:34:03",
+  "last_update": "2026-09-17 10:29:28",
   "history": [
     {
       "time": "2026-09-17 00:18:52",
@@ -1096,6 +1273,81 @@
           "price": 0.21423,
           "change": 36.36,
           "volume": "$231.35万"
+        }
+      ]
+    },
+    {
+      "time": "2026-09-17 10:29:28",
+      "gainers": [
+        {
+          "rank": 1,
+          "symbol": "DELTA",
+          "price": 0.015823,
+          "change": 36.46,
+          "volume": "$38.35万"
+        },
+        {
+          "rank": 2,
+          "symbol": "ROBINCAT",
+          "price": 0.00244,
+          "change": 14.55,
+          "volume": "$102.52万"
+        },
+        {
+          "rank": 3,
+          "symbol": "NEAR",
+          "price": 2.615,
+          "change": 12.48,
+          "volume": "$4.53亿"
+        },
+        {
+          "rank": 4,
+          "symbol": "BEN",
+          "price": 0.000605,
+          "change": 11.42,
+          "volume": "$113.98万"
+        },
+        {
+          "rank": 5,
+          "symbol": "AXON",
+          "price": 474.06,
+          "change": 7.08,
+          "volume": "$72.23万"
+        },
+        {
+          "rank": 6,
+          "symbol": "WAVES",
+          "price": 0.2591,
+          "change": 6.31,
+          "volume": "$431.31万"
+        },
+        {
+          "rank": 7,
+          "symbol": "STRK",
+          "price": 0.02803,
+          "change": 5.42,
+          "volume": "$1497.91万"
+        },
+        {
+          "rank": 8,
+          "symbol": "H",
+          "price": 0.09009,
+          "change": 3.97,
+          "volume": "$2314.00万"
+        },
+        {
+          "rank": 9,
+          "symbol": "PONS",
+          "price": 0.6239,
+          "change": 3.47,
+          "volume": "$1.61亿"
+        },
+        {
+          "rank": 10,
+          "symbol": "G",
+          "price": 0.004281,
+          "change": 3.26,
+          "volume": "$354.06万"
         }
       ]
     }
