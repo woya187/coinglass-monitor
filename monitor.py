@@ -98,34 +98,40 @@ async def fetch_gainers():
             except Exception:
                 pass
 
-            # 调试：全面分析页面结构
-            page_structure = await page.evaluate("""() => {
-                const tables = document.querySelectorAll('table');
-                const tableInfo = [];
-                tables.forEach((t, i) => {
-                    const rows = t.querySelectorAll('tbody tr');
-                    const firstRow = rows[0] ? rows[0].innerHTML.length : 0;
-                    tableInfo.push({index: i, rows: rows.length, firstRowHtmlLen: firstRow, classes: t.className.substring(0,80)});
-                });
-                // 搜索所有包含binance的元素
-                const allElements = document.querySelectorAll('*');
-                let binanceElements = [];
-                allElements.forEach(el => {
-                    const html = el.outerHTML || '';
-                    if (html.toLowerCase().includes('binance') && el.children.length === 0) {
-                        binanceElements.push({tag: el.tagName, class: el.className.substring(0,60), html: html.substring(0,200)});
+            # 从 __NEXT_DATA__ 提取页面初始数据
+            next_data = await page.evaluate("""() => {
+                const script = document.getElementById('__NEXT_DATA__');
+                if (!script) return {error: 'no __NEXT_DATA__'};
+                try {
+                    const data = JSON.parse(script.textContent);
+                    const pp = data.props?.pageProps || {};
+                    // 递归搜索包含涨幅数据的键
+                    const result = {};
+                    function find(obj, path, depth) {
+                        if (depth > 6 || !obj || typeof obj !== 'object') return;
+                        for (const key of Object.keys(obj)) {
+                            const val = obj[key];
+                            if (Array.isArray(val) && val.length > 0 && typeof val[0] === 'object') {
+                                const first = val[0];
+                                const keys = Object.keys(first).join(',');
+                                if (keys.includes('symbol') || keys.includes('change') || keys.includes('price') || keys.includes('exchange')) {
+                                    result[path + '.' + key] = {count: val.length, firstKeys: keys, sample: JSON.stringify(first).substring(0,300)};
+                                }
+                            }
+                            if (typeof val === 'object' && val !== null) {
+                                find(val, path + '.' + key, depth + 1);
+                            }
+                        }
                     }
-                });
-                // 搜索所有交易所图标
-                const exchangeImgs = document.querySelectorAll('img[src*="static/exchanges"], img[data-src*="static/exchanges"]');
-                const exchangeList = [];
-                exchangeImgs.forEach(img => {
-                    const src = img.src || img.dataset.src || '';
-                    exchangeList.push(src.substring(src.lastIndexOf('/')+1));
-                });
-                return {tables: tableInfo, binanceCount: binanceElements.length, binanceElements: binanceElements.slice(0,5), exchangeIcons: [...new Set(exchangeList)]};
+                    find(pp, 'pageProps', 0);
+                    // 也搜索顶层
+                    find(data, 'root', 0);
+                    return result;
+                } catch(e) {
+                    return {error: e.message};
+                }
             }""")
-            log(f"[页面结构] {json.dumps(page_structure, ensure_ascii=False)[:1500]}")
+            log(f"[NEXT_DATA] {json.dumps(next_data, ensure_ascii=False)[:2000]}")
 
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
