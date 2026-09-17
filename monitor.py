@@ -74,6 +74,8 @@ async def fetch_gainers():
             test_endpoints = [
                 ("fapi_USDT", "https://fapi.binance.com/fapi/v1/exchangeInfo"),
                 ("dapi_COIN", "https://dapi.binance.com/dapi/v1/exchangeInfo"),
+                ("data-api_fapi", "https://data-api.binance.vision/fapi/v1/exchangeInfo"),
+                ("data-api_dapi", "https://data-api.binance.vision/dapi/v1/exchangeInfo"),
                 ("data-api_spot", "https://data-api.binance.vision/api/v3/exchangeInfo"),
                 ("api_spot", "https://api.binance.com/api/v3/exchangeInfo"),
             ]
@@ -88,11 +90,11 @@ async def fetch_gainers():
                         # 提取基础币种
                         base_assets = set()
                         for s in symbols:
-                            if name == "fapi_USDT":
+                            if name in ("fapi_USDT", "data-api_fapi"):
                                 # USDT-M 永续：只取 PERPETUAL 合约
                                 if s.get("contractType") == "PERPETUAL" or s.get("status") == "TRADING":
                                     base_assets.add(s.get("baseAsset", ""))
-                            elif name == "dapi_COIN":
+                            elif name in ("dapi_COIN", "data-api_dapi"):
                                 # COIN-M 永续：contractType 为 PERPETUAL
                                 if s.get("contractType") == "PERPETUAL":
                                     base_assets.add(s.get("baseAsset", ""))
@@ -102,7 +104,7 @@ async def fetch_gainers():
                                     base_assets.add(s.get("baseAsset", ""))
                         base_assets.discard("")
                         api_test_results.append(f"{name}: HTTP{status}, 交易对{len(symbols)}, 基础币种{len(base_assets)}")
-                        if name in ("fapi_USDT", "dapi_COIN"):
+                        if name in ("fapi_USDT", "data-api_fapi", "dapi_COIN", "data-api_dapi"):
                             binance_symbols.update(base_assets)
                 except Exception as e:
                     api_test_results.append(f"{name}: 失败 - {type(e).__name__}: {str(e)[:80]}")
