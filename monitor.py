@@ -330,12 +330,14 @@ def generate_html_report(gainers, data):
 
         rows_html.append(f"""
         <div class="coin-row">
-            <div class="rank {rank_class}">{rank}</div>
-            <div class="coin-info">
-                <div class="coin-name">{symbol} {status_badge}</div>
-                <div class="coin-price">{format_price(price)}</div>
-                {"<div class='coin-exchange'>🏢 " + exchange.replace(",", " · ") + "</div>" if exchange else ""}
-                <div class="coin-duration">⏱ 已在榜 {duration_str} · 上榜价 {format_price(first_price)}</div>
+            <div class="coin-row-top">
+                <div class="rank {rank_class}">{rank}</div>
+                <div class="coin-info">
+                    <div class="coin-name">{symbol} {status_badge}</div>
+                    <div class="coin-price">{format_price(price)}</div>
+                    {"<div class='coin-exchange'>🏢 " + exchange.replace(",", " · ") + "</div>" if exchange else ""}
+                    <div class="coin-duration">⏱ 已在榜 {duration_str} · 上榜价 {format_price(first_price)}</div>
+                </div>
             </div>
             <div class="metrics">
                 <div class="metric">
@@ -543,8 +545,43 @@ body {{
     font-size: 11px;
     color: #5c6c7c;
 }}
+/* 手机端优化：纵向布局 */
+@media (max-width: 599px) {{
+    body {{ padding: 12px 10px; }}
+    .header {{ padding: 16px 0 20px; }}
+    .header h1 {{ font-size: 18px; }}
+    .coin-list {{ gap: 10px; }}
+    .coin-row {{
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 14px 16px;
+        gap: 10px;
+    }}
+    .coin-row-top {{
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        width: 100%;
+    }}
+    .rank {{ width: 32px; height: 32px; font-size: 14px; }}
+    .coin-info {{ flex: 1; min-width: 0; }}
+    .coin-name {{ font-size: 16px; margin-bottom: 2px; }}
+    .coin-price {{ font-size: 13px; }}
+    .coin-exchange {{ font-size: 11px; margin-top: 2px; }}
+    .coin-duration {{ font-size: 12px; margin-top: 4px; }}
+    .metrics {{
+        width: 100%;
+        justify-content: space-between;
+        gap: 8px;
+        padding-top: 10px;
+        border-top: 1px solid #2a3a4a;
+    }}
+    .metric {{ align-items: flex-start; flex: 1; }}
+    .metric .value {{ font-size: 16px; }}
+}}
 @media (min-width: 600px) {{
     body {{ max-width: 760px; margin: 0 auto; padding: 24px 20px; }}
+    .coin-row-top {{ display: flex; align-items: center; gap: 16px; flex: 1; min-width: 0; }}
     .coin-duration {{ display: none; }}
     .time-info {{
         display: flex;
