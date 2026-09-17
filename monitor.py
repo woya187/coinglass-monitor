@@ -9,7 +9,6 @@ CoinGlass 涨幅榜监控脚本 - 云端版 (GitHub Actions)
 import asyncio
 import json
 import os
-import re
 import sys
 from datetime import datetime, timedelta, timezone
 from playwright.async_api import async_playwright
@@ -64,21 +63,6 @@ async def fetch_gainers():
         )
 
         page = await context.new_page()
-
-        # 拦截 CoinGlass 内部 API 响应，寻找涨幅榜数据接口
-        api_responses = []
-
-        async def handle_response(response):
-            url = response.url
-            try:
-                ct = (response.headers.get("content-type", "") or "").lower()
-                if "json" in ct and "coinglass" in url:
-                    body = await response.text()
-                    api_responses.append((url, len(body), body[:1500]))
-            except Exception:
-                pass
-
-        page.on("response", handle_response)
 
         try:
             log("正在访问 CoinGlass 涨跌榜页面...")
@@ -141,26 +125,32 @@ async def fetch_gainers():
             except Exception as e:
                 log(f"交易所筛选失败: {e}")
 
+            # 选择币安后等待页面数据刷新
+            try:
+                await page.wait_for_load_state("networkidle", timeout=15000)
+            except Exception:
+                pass
+            await page.wait_for_timeout(2000)
+
+            # 验证筛选结果：输出前5个币种
+            try:
+                verify_rows = await page.query_selector_all("table tbody tr")
+                verify_symbols = []
+                for r in verify_rows[:5]:
+                    cells = await r.query_selector_all("td")
+                    if len(cells) >= 2:
+                        verify_symbols.append((await cells[1].inner_text()).strip())
+                log(f"[币安筛选验证] 前5币种: {verify_symbols}")
+            except Exception:
+                pass
+
             rows = await page.query_selector_all("table tbody tr")
-            raw_gainers = []
-            debug_count = 0
+            gainers = []
 
             for row in rows:
                 cells = await row.query_selector_all("td")
                 if len(cells) < 4:
                     continue
-
-                # 获取行完整HTML，提取所有交易所图标文件名
-                row_html = await row.inner_html()
-                row_html_lower = row_html.lower()
-                # 提取 static/exchanges/ 后面的文件名
-                exchange_icons = re.findall(r'static/exchanges/([a-z0-9_-]+)\.png', row_html_lower)
-                has_binance = "binance" in row_html_lower or "binance" in exchange_icons
-
-                # 调试：输出前5行的交易所图标列表和HTML长度
-                if debug_count < 5:
-                    log(f"[调试] 行{debug_count+1} 交易所图标={exchange_icons} 含币安={has_binance} HTML长度={len(row_html)}")
-                    debug_count += 1
 
                 cell_texts = []
                 for cell in cells:
@@ -177,22 +167,12 @@ async def fetch_gainers():
                     change = float(change_str)
                     volume = cell_texts[4] if len(cells) > 4 else ""
 
-                    # 多抓取候选（前30名），过滤后取前10
-                    if change > 0 and rank <= 30:
-                        raw_gainers.append((rank, symbol, price, change, volume, has_binance))
+                    if change > 0 and rank <= TOP_N:
+                        gainers.append((rank, symbol, price, change, volume))
                 except (ValueError, IndexError):
                     continue
 
-            # 过滤：仅保留币安永续合约品种，然后重新排名
-            binance_gainers = [g for g in raw_gainers if g[5]]
-            non_binance = [g[1] for g in raw_gainers if not g[5]]
-            log(f"涨幅榜候选{len(raw_gainers)}个，其中币安永续合约{len(binance_gainers)}个")
-            if non_binance:
-                log(f"过滤掉非币安品种: {', '.join(non_binance)}")
-
-            # 重新排名（从1开始），取前 TOP_N
-            gainers = [(i + 1, g[1], g[2], g[3], g[4]) for i, g in enumerate(binance_gainers[:TOP_N])]
-            log(f"最终涨幅榜 Top{len(gainers)}（仅币安永续合约）")
+            log(f"成功获取币安永续合约涨幅榜 Top{len(gainers)}")
             return gainers
 
         except Exception as e:
