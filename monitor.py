@@ -65,6 +65,21 @@ async def fetch_gainers():
 
         page = await context.new_page()
 
+        # 拦截 CoinGlass 内部 API 响应，寻找涨幅榜数据接口
+        api_responses = []
+
+        async def handle_response(response):
+            url = response.url
+            if any(kw in url.lower() for kw in ["gainers", "losers", "ticker", "market", "rank", "top", "exchange"]):
+                try:
+                    if "application/json" in (response.headers.get("content-type", "") or ""):
+                        body = await response.text()
+                        api_responses.append((url, body[:2000]))
+                except Exception:
+                    pass
+
+        page.on("response", handle_response)
+
         try:
             log("正在访问 CoinGlass 涨跌榜页面...")
             await page.goto(
@@ -83,21 +98,11 @@ async def fetch_gainers():
             except Exception:
                 pass
 
-            # 横向滚动表格，让右侧的交易所列渲染（rc-table虚拟滚动）
-            try:
-                scroll_result = await page.evaluate("""() => {
-                    const containers = document.querySelectorAll('.rc-table-body, .rc-table-content, [class*=table-body]');
-                    let maxScroll = 0;
-                    containers.forEach(c => {
-                        c.scrollLeft = c.scrollWidth;
-                        maxScroll = Math.max(maxScroll, c.scrollWidth);
-                    });
-                    return 'scrolled ' + containers.length + ' containers, maxWidth=' + maxScroll;
-                }""")
-                log(f"横向滚动表格: {scroll_result}")
-                await page.wait_for_timeout(2000)
-            except Exception as e:
-                log(f"横向滚动失败: {e}")
+            # 调试：输出捕获到的API响应
+            log(f"捕获到 {len(api_responses)} 个相关API响应")
+            for url, body in api_responses[:5]:
+                log(f"[API] {url}")
+                log(f"[API内容] {body[:500]}")
 
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
