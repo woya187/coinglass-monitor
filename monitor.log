@@ -198,3 +198,25 @@
 [2026-09-17 10:13:50] HTML报告已保存（空榜单）
 [2026-09-17 10:13:50] 数据已保存
 [2026-09-17 10:13:50] 监控任务执行完成（空榜单）
+[2026-09-17 10:17:16] ============================================================
+[2026-09-17 10:17:16] 开始执行 CoinGlass 涨幅榜监控任务 (云端版)
+[2026-09-17 10:17:17] 正在访问 CoinGlass 涨跌榜页面（筛选币安）...
+[2026-09-17 10:17:22] [URL筛选验证] 标题=速览实时加密货币涨跌幅 | CoinGlass 前5币种=['BR', 'KNOTS', 'SYN', 'ZCAT', 'ONE']
+[2026-09-17 10:17:24] [表格分析] 页面共 4 个table
+[2026-09-17 10:17:24] [表格分析] table[1] 行数=51 首行HTML长度=462 交易所图标=[]
+[2026-09-17 10:17:24] [表格分析] table[1] 首行HTML片段: <th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">#</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">币种</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">价格</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">价格变化(24小时)</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">24小时成交额</div></th>
+[2026-09-17 10:17:24] [表格分析] table[3] 行数=51 首行HTML长度=462 交易所图标=[]
+[2026-09-17 10:17:24] [表格分析] table[3] 首行HTML片段: <th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">#</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">币种</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">价格</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">价格变化(24小时)</div></th><th class="rc-table-measure-cell"><div class="rc-table-measure-cell-content">24小时成交额</div></th>
+[2026-09-17 10:17:24] [表格分析] 所有table共 102 行
+[2026-09-17 10:17:24] [调试] 行1 交易所图标=[] 含币安=False HTML长度=866
+[2026-09-17 10:17:24] [调试] 行2 交易所图标=['bingx'] 含币安=False HTML长度=864
+[2026-09-17 10:17:24] [调试] 行3 交易所图标=[] 含币安=False HTML长度=866
+[2026-09-17 10:17:24] [调试] 行4 交易所图标=[] 含币安=False HTML长度=875
+[2026-09-17 10:17:24] [调试] 行5 交易所图标=[] 含币安=False HTML长度=869
+[2026-09-17 10:17:26] 涨幅榜候选30个，其中币安永续合约0个
+[2026-09-17 10:17:26] 过滤掉非币安品种: BR, KNOTS, SYN, ZCAT, ONE, HOOKR, BULLA, FOLD, DELTA, STONK, CATE, LSK, 4STOCK, ZEC, ROBINCAT, CASHCAT, SHROOM, DGAI, CYBERLEEK, PAIR, MARSCOIN, BISCOTTI, AVA, SKYAI1, IOST, AGI, SKYAI, HMM, DASH, EMBER
+[2026-09-17 10:17:26] 最终涨幅榜 Top0（仅币安永续合约）
+[2026-09-17 10:17:26] 警告：当前涨幅榜无币安永续合约品种上榜，生成本次空报告
+[2026-09-17 10:17:26] HTML报告已保存（空榜单）
+[2026-09-17 10:17:26] 数据已保存
+[2026-09-17 10:17:26] 监控任务执行完成（空榜单）
