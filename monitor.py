@@ -83,6 +83,22 @@ async def fetch_gainers():
             except Exception:
                 pass
 
+            # 横向滚动表格，让右侧的交易所列渲染（rc-table虚拟滚动）
+            try:
+                scroll_result = await page.evaluate("""() => {
+                    const containers = document.querySelectorAll('.rc-table-body, .rc-table-content, [class*=table-body]');
+                    let maxScroll = 0;
+                    containers.forEach(c => {
+                        c.scrollLeft = c.scrollWidth;
+                        maxScroll = Math.max(maxScroll, c.scrollWidth);
+                    });
+                    return 'scrolled ' + containers.length + ' containers, maxWidth=' + maxScroll;
+                }""")
+                log(f"横向滚动表格: {scroll_result}")
+                await page.wait_for_timeout(2000)
+            except Exception as e:
+                log(f"横向滚动失败: {e}")
+
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
             debug_count = 0
