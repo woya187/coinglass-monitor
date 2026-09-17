@@ -98,29 +98,48 @@ async def fetch_gainers():
             except Exception:
                 pass
 
-            # 搜索页面上的交易所筛选器
-            filter_info = await page.evaluate("""() => {
-                const results = [];
-                // 搜索所有包含交易所相关文字的可点击元素
-                const allElements = document.querySelectorAll('button, a, select, [role="button"], [class*="filter"], [class*="select"], [class*="dropdown"], [class*="tab"]');
-                allElements.forEach(el => {
-                    const text = (el.textContent || '').trim().substring(0, 50);
-                    const cls = (el.className || '').toString().substring(0, 80);
-                    if (text && (text.includes('交易所') || text.includes('Binance') || text.includes('币安') || text.includes('全部') || text.includes('All') || cls.toLowerCase().includes('exchange') || cls.toLowerCase().includes('filter'))) {
-                        results.push({tag: el.tagName, text: text, class: cls, id: el.id});
-                    }
-                });
-                // 搜索所有select选项
-                const selects = document.querySelectorAll('select');
-                const selectOptions = [];
-                selects.forEach(s => {
-                    const opts = [];
-                    s.querySelectorAll('option').forEach(o => opts.push(o.value + ':' + o.text));
-                    selectOptions.push({id: s.id, name: s.name, options: opts.slice(0,10)});
-                });
-                return {clickable: results.slice(0,20), selects: selectOptions};
-            }""")
-            log(f"[筛选器] {json.dumps(filter_info, ensure_ascii=False)[:2000]}")
+            # 点击交易所筛选按钮，选择币安
+            try:
+                exchange_btn = page.get_by_role("button", name="交易所")
+                if await exchange_btn.count() > 0:
+                    await exchange_btn.first.click()
+                    await page.wait_for_timeout(1500)
+                    log("已点击交易所筛选按钮")
+
+                    # 输出下拉菜单中的所有选项
+                    menu_items = await page.evaluate("""() => {
+                        const items = [];
+                        // 搜索所有可见的菜单项
+                        document.querySelectorAll('[role="option"], [role="menuitem"], li, .MuiMenuItem-root, [class*="menu-item"], [class*="option"]').forEach(el => {
+                            const text = (el.textContent || '').trim();
+                            if (text && text.length < 30 && el.offsetParent !== null) {
+                                items.push(text);
+                            }
+                        });
+                        return [...new Set(items)].slice(0, 30);
+                    }""")
+                    log(f"[交易所菜单] 选项: {menu_items}")
+
+                    # 尝试点击币安
+                    binance_item = page.get_by_text("币安", exact=False)
+                    if await binance_item.count() > 0:
+                        await binance_item.first.click()
+                        await page.wait_for_timeout(3000)
+                        log("已选择币安")
+                    else:
+                        # 尝试英文Binance
+                        binance_en = page.get_by_text("Binance", exact=False)
+                        if await binance_en.count() > 0:
+                            await binance_en.first.click()
+                            await page.wait_for_timeout(3000)
+                            log("已选择Binance(英文)")
+                        else:
+                            log("未找到币安选项，按ESC关闭菜单")
+                            await page.keyboard.press("Escape")
+                else:
+                    log("未找到交易所筛选按钮")
+            except Exception as e:
+                log(f"交易所筛选失败: {e}")
 
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
