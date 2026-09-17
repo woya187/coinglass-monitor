@@ -390,19 +390,20 @@ body {{
     background: #0f1419;
     color: #e8e8e8;
     min-height: 100vh;
-    padding: 12px;
+    padding: 20px 16px;
+    line-height: 1.5;
 }}
 .header {{
     text-align: center;
-    padding: 16px 0 20px;
+    padding: 24px 0 28px;
 }}
 .header h1 {{
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     background: linear-gradient(135deg, #f7931a, #ff6b6b);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }}
 .header .time {{
     font-size: 13px;
@@ -411,26 +412,27 @@ body {{
 .header .refresh {{
     font-size: 11px;
     color: #5c6c7c;
-    margin-top: 4px;
+    margin-top: 6px;
 }}
 .coin-list {{
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 }}
 .coin-row {{
     background: #1a2332;
-    border-radius: 12px;
-    padding: 14px;
+    border-radius: 14px;
+    padding: 18px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     border-left: 3px solid #2a3a4a;
+    transition: border-color 0.2s;
 }}
 .rank {{
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     background: #2a3a4a;
     display: flex;
     align-items: center;
@@ -445,27 +447,27 @@ body {{
 }}
 .coin-info {{ flex: 1; min-width: 0; }}
 .coin-name {{
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+    margin-bottom: 4px;
 }}
 .coin-price {{
     font-size: 13px;
     color: #8899a6;
-    margin-top: 2px;
 }}
 .coin-duration {{
-    font-size: 11px;
+    font-size: 12px;
     color: #60a5fa;
-    margin-top: 3px;
+    margin-top: 5px;
     font-weight: 500;
 }}
 .badge {{
     font-size: 10px;
-    padding: 2px 6px;
+    padding: 2px 8px;
     border-radius: 4px;
     font-weight: 500;
 }}
@@ -473,43 +475,42 @@ body {{
 .badge.keep {{ background: #1e3a5f; color: #60a5fa; }}
 .metrics {{
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    gap: 18px;
     text-align: right;
     flex-shrink: 0;
 }}
-.metric {{ display: flex; flex-direction: column; }}
-.metric .label {{ font-size: 10px; color: #5c6c7c; }}
-.metric .value {{ font-size: 14px; font-weight: 600; }}
+.metric {{ display: flex; flex-direction: column; align-items: flex-end; }}
+.metric .label {{ font-size: 10px; color: #5c6c7c; margin-bottom: 2px; }}
+.metric .value {{ font-size: 15px; font-weight: 600; }}
 .up {{ color: #ff4d4f; }}
 .down {{ color: #52c41a; }}
 .time-info {{ display: none; }}
 .dropped {{
     background: #2a1a1a;
     border: 1px solid #4a2a2a;
-    border-radius: 8px;
-    padding: 10px 14px;
+    border-radius: 10px;
+    padding: 12px 16px;
     font-size: 13px;
     color: #ff7875;
-    margin-top: 12px;
+    margin-top: 16px;
 }}
 .stats-section {{
     background: #1a2332;
-    border-radius: 12px;
-    padding: 14px;
-    margin-top: 12px;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 16px;
 }}
 .stats-title {{
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     color: #d0d0d0;
 }}
 .stat-item {{
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 8px 0;
     border-bottom: 1px solid #2a3a4a;
     font-size: 13px;
 }}
@@ -519,17 +520,17 @@ body {{
 .stat-rank {{ color: #8899a6; font-size: 12px; }}
 .footer {{
     text-align: center;
-    padding: 20px 0 10px;
+    padding: 28px 0 12px;
     font-size: 11px;
     color: #5c6c7c;
 }}
 @media (min-width: 600px) {{
-    body {{ max-width: 700px; margin: 0 auto; }}
+    body {{ max-width: 760px; margin: 0 auto; padding: 24px 20px; }}
     .coin-duration {{ display: none; }}
     .time-info {{
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
         text-align: right;
         flex-shrink: 0;
     }}
