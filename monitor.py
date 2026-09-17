@@ -70,13 +70,13 @@ async def fetch_gainers():
 
         async def handle_response(response):
             url = response.url
-            if any(kw in url.lower() for kw in ["gainers", "losers", "ticker", "market", "rank", "top", "exchange"]):
-                try:
-                    if "application/json" in (response.headers.get("content-type", "") or ""):
-                        body = await response.text()
-                        api_responses.append((url, body[:2000]))
-                except Exception:
-                    pass
+            try:
+                ct = (response.headers.get("content-type", "") or "").lower()
+                if "json" in ct and "coinglass" in url:
+                    body = await response.text()
+                    api_responses.append((url, len(body), body[:1500]))
+            except Exception:
+                pass
 
         page.on("response", handle_response)
 
@@ -99,10 +99,11 @@ async def fetch_gainers():
                 pass
 
             # 调试：输出捕获到的API响应
-            log(f"捕获到 {len(api_responses)} 个相关API响应")
-            for url, body in api_responses[:5]:
-                log(f"[API] {url}")
-                log(f"[API内容] {body[:500]}")
+            log(f"捕获到 {len(api_responses)} 个JSON API响应")
+            for url, size, body in api_responses[:10]:
+                log(f"[API] size={size} {url}")
+                if size > 100:
+                    log(f"[API内容] {body[:400]}")
 
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
