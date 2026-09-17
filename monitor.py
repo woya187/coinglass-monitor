@@ -9,6 +9,7 @@ CoinGlass 涨幅榜监控脚本 - 云端版 (GitHub Actions)
 import asyncio
 import json
 import os
+import re
 import sys
 from datetime import datetime, timedelta, timezone
 from playwright.async_api import async_playwright
@@ -95,6 +96,18 @@ async def fetch_gainers():
                     text = await cell.inner_text()
                     cell_texts.append(text.strip())
 
+                # 从行HTML提取交易所图标
+                row_html = await row.inner_html()
+                ex_icons = re.findall(r'static/exchanges/([a-z0-9_-]+)\.png', row_html.lower())
+                # 去除重复，取前2个
+                seen = set()
+                ex_list = []
+                for e in ex_icons:
+                    if e not in seen:
+                        seen.add(e)
+                        ex_list.append(e)
+                exchange = ", ".join(ex_list[:2]) if ex_list else ""
+
                 try:
                     rank = int(cell_texts[0])
                     symbol = cell_texts[1]
@@ -106,7 +119,7 @@ async def fetch_gainers():
                     volume = cell_texts[4] if len(cells) > 4 else ""
 
                     if change > 0 and rank <= TOP_N:
-                        gainers.append((rank, symbol, price, change, volume))
+                        gainers.append((rank, symbol, price, change, volume, exchange))
                 except (ValueError, IndexError):
                     continue
 
@@ -177,7 +190,7 @@ def update_and_report(gainers, data):
     )
     lines.append("-" * 110)
 
-    for rank, symbol, price, change, volume in gainers:
+    for rank, symbol, price, change, volume, exchange in gainers:
         current_symbols.add(symbol)
         is_new = False
 
@@ -292,7 +305,7 @@ def generate_html_report(gainers, data):
     current_symbols = set(s for _, s, _, _, _ in gainers)
 
     rows_html = []
-    for rank, symbol, price, change, volume in gainers:
+    for rank, symbol, price, change, volume, exchange in gainers:
         coin = data["coins"].get(symbol, {})
         first_seen = coin.get("first_seen", now_str)
         first_price = coin.get("first_seen_price", price)
@@ -321,6 +334,7 @@ def generate_html_report(gainers, data):
             <div class="coin-info">
                 <div class="coin-name">{symbol} {status_badge}</div>
                 <div class="coin-price">{format_price(price)}</div>
+                {"<div class='coin-exchange'>🏢 " + exchange.replace(",", " · ") + "</div>" if exchange else ""}
                 <div class="coin-duration">⏱ 已在榜 {duration_str} · 上榜价 {format_price(first_price)}</div>
             </div>
             <div class="metrics">
@@ -458,6 +472,11 @@ body {{
 .coin-price {{
     font-size: 13px;
     color: #8899a6;
+}}
+.coin-exchange {{
+    font-size: 11px;
+    color: #6b7c8d;
+    margin-top: 3px;
 }}
 .coin-duration {{
     font-size: 12px;
