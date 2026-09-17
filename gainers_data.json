@@ -274,11 +274,11 @@
       "first_seen": "2026-09-17 00:18:52",
       "first_seen_price": 0.015711,
       "first_seen_change": 25.39,
-      "last_seen": "2026-09-17 10:59:21",
-      "current_price": 0.015918,
-      "current_change": 42.39,
+      "last_seen": "2026-09-17 11:03:42",
+      "current_price": 0.0157,
+      "current_change": 38.16,
       "best_rank": 1,
-      "appearances": 6,
+      "appearances": 7,
       "rank_history": [
         {
           "time": "2026-09-17 00:18:52",
@@ -315,6 +315,12 @@
           "rank": 7,
           "price": 0.015918,
           "change": 42.39
+        },
+        {
+          "time": "2026-09-17 11:03:42",
+          "rank": 1,
+          "price": 0.0157,
+          "change": 38.16
         }
       ]
     },
@@ -765,17 +771,23 @@
       "first_seen": "2026-09-17 10:29:28",
       "first_seen_price": 0.00244,
       "first_seen_change": 14.55,
-      "last_seen": "2026-09-17 10:29:28",
-      "current_price": 0.00244,
-      "current_change": 14.55,
+      "last_seen": "2026-09-17 11:03:42",
+      "current_price": 0.0024,
+      "current_change": 13.21,
       "best_rank": 2,
-      "appearances": 1,
+      "appearances": 2,
       "rank_history": [
         {
           "time": "2026-09-17 10:29:28",
           "rank": 2,
           "price": 0.00244,
           "change": 14.55
+        },
+        {
+          "time": "2026-09-17 11:03:42",
+          "rank": 3,
+          "price": 0.0024,
+          "change": 13.21
         }
       ]
     },
@@ -784,17 +796,23 @@
       "first_seen": "2026-09-17 10:29:28",
       "first_seen_price": 2.615,
       "first_seen_change": 12.48,
-      "last_seen": "2026-09-17 10:29:28",
-      "current_price": 2.615,
-      "current_change": 12.48,
+      "last_seen": "2026-09-17 11:03:42",
+      "current_price": 2.64,
+      "current_change": 12.83,
       "best_rank": 3,
-      "appearances": 1,
+      "appearances": 2,
       "rank_history": [
         {
           "time": "2026-09-17 10:29:28",
           "rank": 3,
           "price": 2.615,
           "change": 12.48
+        },
+        {
+          "time": "2026-09-17 11:03:42",
+          "rank": 4,
+          "price": 2.64,
+          "change": 12.83
         }
       ]
     },
@@ -803,17 +821,23 @@
       "first_seen": "2026-09-17 10:29:28",
       "first_seen_price": 0.000605,
       "first_seen_change": 11.42,
-      "last_seen": "2026-09-17 10:29:28",
-      "current_price": 0.000605,
-      "current_change": 11.42,
-      "best_rank": 4,
-      "appearances": 1,
+      "last_seen": "2026-09-17 11:03:42",
+      "current_price": 0.000664,
+      "current_change": 25.05,
+      "best_rank": 2,
+      "appearances": 2,
       "rank_history": [
         {
           "time": "2026-09-17 10:29:28",
           "rank": 4,
           "price": 0.000605,
           "change": 11.42
+        },
+        {
+          "time": "2026-09-17 11:03:42",
+          "rank": 2,
+          "price": 0.000664,
+          "change": 25.05
         }
       ]
     },
@@ -957,7 +981,7 @@
       ]
     }
   },
-  "last_update": "2026-09-17 10:59:21",
+  "last_update": "2026-09-17 11:03:42",
   "history": [
     {
       "time": "2026-09-17 00:18:52",
@@ -1631,6 +1655,39 @@
           "price": 0.00803,
           "change": 30.78,
           "volume": "$45.26万"
+        }
+      ]
+    },
+    {
+      "time": "2026-09-17 11:03:42",
+      "gainers": [
+        {
+          "rank": 1,
+          "symbol": "DELTA",
+          "price": 0.0157,
+          "change": 38.16,
+          "volume": "$39.24万"
+        },
+        {
+          "rank": 2,
+          "symbol": "BEN",
+          "price": 0.000664,
+          "change": 25.05,
+          "volume": "$113.50万"
+        },
+        {
+          "rank": 3,
+          "symbol": "ROBINCAT",
+          "price": 0.0024,
+          "change": 13.21,
+          "volume": "$101.98万"
+        },
+        {
+          "rank": 4,
+          "symbol": "NEAR",
+          "price": 2.64,
+          "change": 12.83,
+          "volume": "$9.17亿"
         }
       ]
     }
