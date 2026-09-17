@@ -12,19 +12,20 @@ body {
     background: #0f1419;
     color: #e8e8e8;
     min-height: 100vh;
-    padding: 12px;
+    padding: 20px 16px;
+    line-height: 1.5;
 }
 .header {
     text-align: center;
-    padding: 16px 0 20px;
+    padding: 24px 0 28px;
 }
 .header h1 {
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 700;
     background: linear-gradient(135deg, #f7931a, #ff6b6b);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    margin-bottom: 6px;
+    margin-bottom: 8px;
 }
 .header .time {
     font-size: 13px;
@@ -33,26 +34,27 @@ body {
 .header .refresh {
     font-size: 11px;
     color: #5c6c7c;
-    margin-top: 4px;
+    margin-top: 6px;
 }
 .coin-list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 14px;
 }
 .coin-row {
     background: #1a2332;
-    border-radius: 12px;
-    padding: 14px;
+    border-radius: 14px;
+    padding: 18px 20px;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
     border-left: 3px solid #2a3a4a;
+    transition: border-color 0.2s;
 }
 .rank {
-    width: 32px;
-    height: 32px;
-    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
     background: #2a3a4a;
     display: flex;
     align-items: center;
@@ -67,27 +69,27 @@ body {
 }
 .coin-info { flex: 1; min-width: 0; }
 .coin-name {
-    font-size: 16px;
+    font-size: 17px;
     font-weight: 600;
     display: flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+    margin-bottom: 4px;
 }
 .coin-price {
     font-size: 13px;
     color: #8899a6;
-    margin-top: 2px;
 }
 .coin-duration {
-    font-size: 11px;
+    font-size: 12px;
     color: #60a5fa;
-    margin-top: 3px;
+    margin-top: 5px;
     font-weight: 500;
 }
 .badge {
     font-size: 10px;
-    padding: 2px 6px;
+    padding: 2px 8px;
     border-radius: 4px;
     font-weight: 500;
 }
@@ -95,43 +97,42 @@ body {
 .badge.keep { background: #1e3a5f; color: #60a5fa; }
 .metrics {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    gap: 18px;
     text-align: right;
     flex-shrink: 0;
 }
-.metric { display: flex; flex-direction: column; }
-.metric .label { font-size: 10px; color: #5c6c7c; }
-.metric .value { font-size: 14px; font-weight: 600; }
+.metric { display: flex; flex-direction: column; align-items: flex-end; }
+.metric .label { font-size: 10px; color: #5c6c7c; margin-bottom: 2px; }
+.metric .value { font-size: 15px; font-weight: 600; }
 .up { color: #ff4d4f; }
 .down { color: #52c41a; }
 .time-info { display: none; }
 .dropped {
     background: #2a1a1a;
     border: 1px solid #4a2a2a;
-    border-radius: 8px;
-    padding: 10px 14px;
+    border-radius: 10px;
+    padding: 12px 16px;
     font-size: 13px;
     color: #ff7875;
-    margin-top: 12px;
+    margin-top: 16px;
 }
 .stats-section {
     background: #1a2332;
-    border-radius: 12px;
-    padding: 14px;
-    margin-top: 12px;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-top: 16px;
 }
 .stats-title {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
     color: #d0d0d0;
 }
 .stat-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 6px 0;
+    padding: 8px 0;
     border-bottom: 1px solid #2a3a4a;
     font-size: 13px;
 }
@@ -141,17 +142,17 @@ body {
 .stat-rank { color: #8899a6; font-size: 12px; }
 .footer {
     text-align: center;
-    padding: 20px 0 10px;
+    padding: 28px 0 12px;
     font-size: 11px;
     color: #5c6c7c;
 }
 @media (min-width: 600px) {
-    body { max-width: 700px; margin: 0 auto; }
+    body { max-width: 760px; margin: 0 auto; padding: 24px 20px; }
     .coin-duration { display: none; }
     .time-info {
         display: flex;
         flex-direction: column;
-        gap: 2px;
+        gap: 4px;
         text-align: right;
         flex-shrink: 0;
     }
@@ -164,7 +165,7 @@ body {
 <body>
 <div class="header">
     <h1>🔥 CoinGlass 涨幅榜监控</h1>
-    <div class="time">更新时间: 2026-09-17 23:02:10</div>
+    <div class="time">更新时间: 2026-09-17 23:07:08</div>
     <div class="refresh">页面每 5 分钟自动刷新 · 云端每小时更新</div>
 </div>
 <div class="coin-list">
@@ -172,40 +173,14 @@ body {
         <div class="coin-row">
             <div class="rank rank-top">1</div>
             <div class="coin-info">
-                <div class="coin-name">AVA <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.320000</div>
-                <div class="coin-duration">⏱ 已在榜 9小时28分 · 上榜价 $0.193800</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+110.79%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$0.193800</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value up">+65.12%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 13:34:10</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">9小时28分</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank rank-top">2</div>
-            <div class="coin-info">
                 <div class="coin-name">ONE <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00128770</div>
-                <div class="coin-duration">⏱ 已在榜 15小时34分 · 上榜价 $0.00087350</div>
+                <div class="coin-price">$0.00133380</div>
+                <div class="coin-duration">⏱ 已在榜 15小时39分 · 上榜价 $0.00087350</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+96.15%</span>
+                    <span class="value up">+103.36%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -213,25 +188,51 @@ body {
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value up">+47.42%</span>
+                    <span class="value up">+52.70%</span>
                 </div>
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 07:27:46</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">15小时34分</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">15小时39分</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank rank-top">2</div>
+            <div class="coin-info">
+                <div class="coin-name">AVA <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.301400</div>
+                <div class="coin-duration">⏱ 已在榜 9小时32分 · 上榜价 $0.193800</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+98.55%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$0.193800</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value up">+55.52%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 13:34:10</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">9小时32分</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank rank-top">3</div>
             <div class="coin-info">
                 <div class="coin-name">KNOTS <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.020980</div>
-                <div class="coin-duration">⏱ 已在榜 15小时34分 · 上榜价 $0.016700</div>
+                <div class="coin-price">$0.021010</div>
+                <div class="coin-duration">⏱ 已在榜 15小时39分 · 上榜价 $0.016700</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+87.58%</span>
+                    <span class="value up">+85.44%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -239,25 +240,25 @@ body {
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value up">+25.63%</span>
+                    <span class="value up">+25.81%</span>
                 </div>
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 07:27:46</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">15小时34分</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">15小时39分</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">4</div>
             <div class="coin-info">
                 <div class="coin-name">NUDES <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00468800</div>
-                <div class="coin-duration">⏱ 已在榜 4小时32分 · 上榜价 $0.00365700</div>
+                <div class="coin-price">$0.00442100</div>
+                <div class="coin-duration">⏱ 已在榜 4小时37分 · 上榜价 $0.00365700</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+64.26%</span>
+                    <span class="value up">+64.78%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -265,25 +266,25 @@ body {
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value up">+28.19%</span>
+                    <span class="value up">+20.89%</span>
                 </div>
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 18:29:52</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">4小时32分</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">4小时37分</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">5</div>
             <div class="coin-info">
                 <div class="coin-name">MEMECOIN <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.045670</div>
-                <div class="coin-duration">⏱ 已在榜 33分钟 · 上榜价 $0.044750</div>
+                <div class="coin-price">$0.045090</div>
+                <div class="coin-duration">⏱ 已在榜 38分钟 · 上榜价 $0.044750</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+55.60%</span>
+                    <span class="value up">+55.81%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -291,25 +292,25 @@ body {
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value up">+2.06%</span>
+                    <span class="value up">+0.76%</span>
                 </div>
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">33分钟</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">38分钟</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">6</div>
             <div class="coin-info">
                 <div class="coin-name">SPACEHOOD <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00387300</div>
-                <div class="coin-duration">⏱ 已在榜 33分钟 · 上榜价 $0.00374700</div>
+                <div class="coin-price">$0.00386000</div>
+                <div class="coin-duration">⏱ 已在榜 38分钟 · 上榜价 $0.00374700</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+55.23%</span>
+                    <span class="value up">+50.02%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -317,181 +318,25 @@ body {
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value up">+3.36%</span>
+                    <span class="value up">+3.02%</span>
                 </div>
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">33分钟</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">38分钟</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">7</div>
             <div class="coin-info">
-                <div class="coin-name">OTC <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00630000</div>
-                <div class="coin-duration">⏱ 已在榜 33分钟 · 上榜价 $0.00574000</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+49.76%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$0.00574000</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value up">+9.76%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">33分钟</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank ">8</div>
-            <div class="coin-info">
-                <div class="coin-name">STONK <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.240000</div>
-                <div class="coin-duration">⏱ 已在榜 13小时28分 · 上榜价 $0.214230</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+48.45%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$0.214230</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value up">+12.03%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 09:34:03</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">13小时28分</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank ">9</div>
-            <div class="coin-info">
-                <div class="coin-name">MOO <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.024500</div>
-                <div class="coin-duration">⏱ 已在榜 9小时28分 · 上榜价 $0.019260</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+45.66%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$0.019260</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value up">+27.21%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 13:34:10</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">9小时28分</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank ">10</div>
-            <div class="coin-info">
-                <div class="coin-name">STABLECOINX <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$8.6490</div>
-                <div class="coin-duration">⏱ 已在榜 33分钟 · 上榜价 $8.6864</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+44.39%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$8.6864</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value down">-0.43%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">33分钟</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank ">11</div>
-            <div class="coin-info">
-                <div class="coin-name">SHROOM <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.012520</div>
-                <div class="coin-duration">⏱ 已在榜 16小时36分 · 上榜价 $0.00812000</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+43.25%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$0.00812000</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value up">+54.19%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 06:25:48</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">16小时36分</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank ">12</div>
-            <div class="coin-info">
-                <div class="coin-name">MICRODUCK <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00607000</div>
-                <div class="coin-duration">⏱ 已在榜 33分钟 · 上榜价 $0.00600000</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+38.58%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$0.00600000</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value up">+1.17%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">33分钟</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank ">13</div>
-            <div class="coin-info">
                 <div class="coin-name">EMBER <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.015270</div>
-                <div class="coin-duration">⏱ 已在榜 11小时36分 · 上榜价 $0.012460</div>
+                <div class="coin-price">$0.015080</div>
+                <div class="coin-duration">⏱ 已在榜 11小时41分 · 上榜价 $0.012460</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+38.44%</span>
+                    <span class="value up">+45.71%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -499,25 +344,181 @@ body {
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value up">+22.55%</span>
+                    <span class="value up">+21.03%</span>
                 </div>
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 11:25:58</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">11小时36分</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">11小时41分</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank ">8</div>
+            <div class="coin-info">
+                <div class="coin-name">STABLECOINX <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$8.6330</div>
+                <div class="coin-duration">⏱ 已在榜 38分钟 · 上榜价 $8.6864</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+44.12%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$8.6864</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value down">-0.61%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">38分钟</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank ">9</div>
+            <div class="coin-info">
+                <div class="coin-name">STONK <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.238750</div>
+                <div class="coin-duration">⏱ 已在榜 13小时33分 · 上榜价 $0.214230</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+43.74%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$0.214230</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value up">+11.45%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 09:34:03</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">13小时33分</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank ">10</div>
+            <div class="coin-info">
+                <div class="coin-name">SHROOM <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.012290</div>
+                <div class="coin-duration">⏱ 已在榜 16小时41分 · 上榜价 $0.00812000</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+42.30%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$0.00812000</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value up">+51.35%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 06:25:48</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">16小时41分</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank ">11</div>
+            <div class="coin-info">
+                <div class="coin-name">MOO <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.023500</div>
+                <div class="coin-duration">⏱ 已在榜 9小时32分 · 上榜价 $0.019260</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+40.13%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$0.019260</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value up">+22.01%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 13:34:10</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">9小时32分</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank ">12</div>
+            <div class="coin-info">
+                <div class="coin-name">OTC <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.00591000</div>
+                <div class="coin-duration">⏱ 已在榜 38分钟 · 上榜价 $0.00574000</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+39.05%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$0.00574000</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value up">+2.96%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">38分钟</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank ">13</div>
+            <div class="coin-info">
+                <div class="coin-name">MICRODUCK <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.00601000</div>
+                <div class="coin-duration">⏱ 已在榜 38分钟 · 上榜价 $0.00600000</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+37.21%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$0.00600000</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value up">+0.17%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">38分钟</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">14</div>
             <div class="coin-info">
                 <div class="coin-name">BATON <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00356700</div>
-                <div class="coin-duration">⏱ 已在榜 33分钟 · 上榜价 $0.00399300</div>
+                <div class="coin-price">$0.00357900</div>
+                <div class="coin-duration">⏱ 已在榜 38分钟 · 上榜价 $0.00399300</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+33.70%</span>
+                    <span class="value up">+36.12%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -525,25 +526,51 @@ body {
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value down">-10.67%</span>
+                    <span class="value down">-10.37%</span>
                 </div>
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">33分钟</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">38分钟</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">15</div>
             <div class="coin-info">
-                <div class="coin-name">RABBIT <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00010600</div>
-                <div class="coin-duration">⏱ 已在榜 4小时32分 · 上榜价 $0.00010220</div>
+                <div class="coin-name">4STOCK <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.012750</div>
+                <div class="coin-duration">⏱ 已在榜 12小时11分 · 上榜价 $0.012240</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+32.83%</span>
+                    <span class="value up">+35.37%</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜价</span>
+                    <span class="value">$0.012240</span>
+                </div>
+                <div class="metric">
+                    <span class="label">上榜后</span>
+                    <span class="value up">+4.17%</span>
+                </div>
+            </div>
+            <div class="time-info">
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 10:55:36</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">12小时11分</span></div>
+            </div>
+        </div>
+        <div class="coin-row">
+            <div class="rank ">16</div>
+            <div class="coin-info">
+                <div class="coin-name">RABBIT <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.00010600</div>
+                <div class="coin-duration">⏱ 已在榜 4小时37分 · 上榜价 $0.00010220</div>
+            </div>
+            <div class="metrics">
+                <div class="metric">
+                    <span class="label">24h涨幅</span>
+                    <span class="value up">+32.50%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -556,59 +583,33 @@ body {
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 18:29:52</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">4小时32分</span></div>
-            </div>
-        </div>
-        <div class="coin-row">
-            <div class="rank ">16</div>
-            <div class="coin-info">
-                <div class="coin-name">4STOCK <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.012710</div>
-                <div class="coin-duration">⏱ 已在榜 12小时6分 · 上榜价 $0.012240</div>
-            </div>
-            <div class="metrics">
-                <div class="metric">
-                    <span class="label">24h涨幅</span>
-                    <span class="value up">+32.12%</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜价</span>
-                    <span class="value">$0.012240</span>
-                </div>
-                <div class="metric">
-                    <span class="label">上榜后</span>
-                    <span class="value up">+3.84%</span>
-                </div>
-            </div>
-            <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 10:55:36</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">12小时6分</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">4小时37分</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">17</div>
             <div class="coin-info">
-                <div class="coin-name">BEN <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.00074600</div>
-                <div class="coin-duration">⏱ 已在榜 12小时32分 · 上榜价 $0.00060500</div>
+                <div class="coin-name">INDEX <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.031320</div>
+                <div class="coin-duration">⏱ 已在榜 38分钟 · 上榜价 $0.034310</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+31.80%</span>
+                    <span class="value up">+30.45%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
-                    <span class="value">$0.00060500</span>
+                    <span class="value">$0.034310</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value up">+23.31%</span>
+                    <span class="value down">-8.71%</span>
                 </div>
             </div>
             <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 10:29:28</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">12小时32分</span></div>
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">38分钟</span></div>
             </div>
         </div>
         <div class="coin-row">
@@ -616,12 +617,12 @@ body {
             <div class="coin-info">
                 <div class="coin-name">ZCAT <span class="badge keep">持续在榜</span></div>
                 <div class="coin-price">$0.134860</div>
-                <div class="coin-duration">⏱ 已在榜 15小时34分 · 上榜价 $0.112420</div>
+                <div class="coin-duration">⏱ 已在榜 15小时39分 · 上榜价 $0.112420</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+30.49%</span>
+                    <span class="value up">+30.01%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -634,33 +635,33 @@ body {
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 07:27:46</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">15小时34分</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">15小时39分</span></div>
             </div>
         </div>
         <div class="coin-row">
             <div class="rank ">19</div>
             <div class="coin-info">
-                <div class="coin-name">INDEX <span class="badge keep">持续在榜</span></div>
-                <div class="coin-price">$0.031130</div>
-                <div class="coin-duration">⏱ 已在榜 33分钟 · 上榜价 $0.034310</div>
+                <div class="coin-name">BEN <span class="badge keep">持续在榜</span></div>
+                <div class="coin-price">$0.00073000</div>
+                <div class="coin-duration">⏱ 已在榜 12小时37分 · 上榜价 $0.00060500</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+29.65%</span>
+                    <span class="value up">+29.20%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
-                    <span class="value">$0.034310</span>
+                    <span class="value">$0.00060500</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜后</span>
-                    <span class="value down">-9.27%</span>
+                    <span class="value up">+20.66%</span>
                 </div>
             </div>
             <div class="time-info">
-                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 22:28:18</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">33分钟</span></div>
+                <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 10:29:28</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">12小时37分</span></div>
             </div>
         </div>
         <div class="coin-row">
@@ -668,12 +669,12 @@ body {
             <div class="coin-info">
                 <div class="coin-name">ROBINCAT <span class="badge keep">持续在榜</span></div>
                 <div class="coin-price">$0.00255000</div>
-                <div class="coin-duration">⏱ 已在榜 12小时32分 · 上榜价 $0.00244000</div>
+                <div class="coin-duration">⏱ 已在榜 12小时37分 · 上榜价 $0.00244000</div>
             </div>
             <div class="metrics">
                 <div class="metric">
                     <span class="label">24h涨幅</span>
-                    <span class="value up">+27.64%</span>
+                    <span class="value up">+28.79%</span>
                 </div>
                 <div class="metric">
                     <span class="label">上榜价</span>
@@ -686,7 +687,7 @@ body {
             </div>
             <div class="time-info">
                 <div class="time-item"><span class="label">首次上榜</span><span class="val">2026-09-17 10:29:28</span></div>
-                <div class="time-item"><span class="label">已在榜</span><span class="val">12小时32分</span></div>
+                <div class="time-item"><span class="label">已在榜</span><span class="val">12小时37分</span></div>
             </div>
         </div>
 </div>
@@ -694,7 +695,7 @@ body {
 
         <div class="stats-section">
             <div class="stats-title">⏱ 在榜超过1小时 (13个)</div>
-            <div class="stat-item"><span class="stat-symbol">ONE</span><span class="stat-gain up">+47.42%</span><span class="stat-rank">最高#1</span></div><div class="stat-item"><span class="stat-symbol">AVA</span><span class="stat-gain up">+65.12%</span><span class="stat-rank">最高#1</span></div><div class="stat-item"><span class="stat-symbol">KNOTS</span><span class="stat-gain up">+25.63%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">ZCAT</span><span class="stat-gain up">+19.96%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">ROBINCAT</span><span class="stat-gain up">+4.51%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">BEN</span><span class="stat-gain up">+23.31%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">MOO</span><span class="stat-gain up">+27.21%</span><span class="stat-rank">最高#4</span></div><div class="stat-item"><span class="stat-symbol">NUDES</span><span class="stat-gain up">+28.19%</span><span class="stat-rank">最高#4</span></div><div class="stat-item"><span class="stat-symbol">SHROOM</span><span class="stat-gain up">+54.19%</span><span class="stat-rank">最高#5</span></div><div class="stat-item"><span class="stat-symbol">STONK</span><span class="stat-gain up">+12.03%</span><span class="stat-rank">最高#7</span></div><div class="stat-item"><span class="stat-symbol">4STOCK</span><span class="stat-gain up">+3.84%</span><span class="stat-rank">最高#7</span></div><div class="stat-item"><span class="stat-symbol">EMBER</span><span class="stat-gain up">+22.55%</span><span class="stat-rank">最高#7</span></div><div class="stat-item"><span class="stat-symbol">RABBIT</span><span class="stat-gain up">+3.72%</span><span class="stat-rank">最高#10</span></div>
+            <div class="stat-item"><span class="stat-symbol">ONE</span><span class="stat-gain up">+52.70%</span><span class="stat-rank">最高#1</span></div><div class="stat-item"><span class="stat-symbol">AVA</span><span class="stat-gain up">+55.52%</span><span class="stat-rank">最高#1</span></div><div class="stat-item"><span class="stat-symbol">KNOTS</span><span class="stat-gain up">+25.81%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">ZCAT</span><span class="stat-gain up">+19.96%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">ROBINCAT</span><span class="stat-gain up">+4.51%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">BEN</span><span class="stat-gain up">+20.66%</span><span class="stat-rank">最高#2</span></div><div class="stat-item"><span class="stat-symbol">MOO</span><span class="stat-gain up">+22.01%</span><span class="stat-rank">最高#4</span></div><div class="stat-item"><span class="stat-symbol">NUDES</span><span class="stat-gain up">+20.89%</span><span class="stat-rank">最高#4</span></div><div class="stat-item"><span class="stat-symbol">SHROOM</span><span class="stat-gain up">+51.35%</span><span class="stat-rank">最高#5</span></div><div class="stat-item"><span class="stat-symbol">STONK</span><span class="stat-gain up">+11.45%</span><span class="stat-rank">最高#7</span></div><div class="stat-item"><span class="stat-symbol">4STOCK</span><span class="stat-gain up">+4.17%</span><span class="stat-rank">最高#7</span></div><div class="stat-item"><span class="stat-symbol">EMBER</span><span class="stat-gain up">+21.03%</span><span class="stat-rank">最高#7</span></div><div class="stat-item"><span class="stat-symbol">RABBIT</span><span class="stat-gain up">+3.72%</span><span class="stat-rank">最高#10</span></div>
         </div>
 <div class="footer">
     数据来源: CoinGlass · GitHub Actions 每小时自动监控 · 24h 涨幅榜 Top20
