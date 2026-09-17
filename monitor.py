@@ -98,12 +98,34 @@ async def fetch_gainers():
             except Exception:
                 pass
 
-            # 调试：输出捕获到的API响应
-            log(f"捕获到 {len(api_responses)} 个JSON API响应")
-            for url, size, body in api_responses[:10]:
-                log(f"[API] size={size} {url}")
-                if size > 100:
-                    log(f"[API内容] {body[:400]}")
+            # 调试：全面分析页面结构
+            page_structure = await page.evaluate("""() => {
+                const tables = document.querySelectorAll('table');
+                const tableInfo = [];
+                tables.forEach((t, i) => {
+                    const rows = t.querySelectorAll('tbody tr');
+                    const firstRow = rows[0] ? rows[0].innerHTML.length : 0;
+                    tableInfo.push({index: i, rows: rows.length, firstRowHtmlLen: firstRow, classes: t.className.substring(0,80)});
+                });
+                // 搜索所有包含binance的元素
+                const allElements = document.querySelectorAll('*');
+                let binanceElements = [];
+                allElements.forEach(el => {
+                    const html = el.outerHTML || '';
+                    if (html.toLowerCase().includes('binance') && el.children.length === 0) {
+                        binanceElements.push({tag: el.tagName, class: el.className.substring(0,60), html: html.substring(0,200)});
+                    }
+                });
+                // 搜索所有交易所图标
+                const exchangeImgs = document.querySelectorAll('img[src*="static/exchanges"], img[data-src*="static/exchanges"]');
+                const exchangeList = [];
+                exchangeImgs.forEach(img => {
+                    const src = img.src || img.dataset.src || '';
+                    exchangeList.push(src.substring(src.lastIndexOf('/')+1));
+                });
+                return {tables: tableInfo, binanceCount: binanceElements.length, binanceElements: binanceElements.slice(0,5), exchangeIcons: [...new Set(exchangeList)]};
+            }""")
+            log(f"[页面结构] {json.dumps(page_structure, ensure_ascii=False)[:1500]}")
 
             rows = await page.query_selector_all("table tbody tr")
             raw_gainers = []
