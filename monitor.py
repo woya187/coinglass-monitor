@@ -10,7 +10,6 @@ import asyncio
 import json
 import os
 import sys
-import urllib.request
 from datetime import datetime, timedelta, timezone
 from playwright.async_api import async_playwright
 
@@ -42,39 +41,6 @@ def log(msg):
             f.write(line + "\n")
     except IOError:
         pass
-
-
-def fetch_binance_perpetual_symbols():
-    """获取币安 USDT 本位永续合约（PERPETUAL）的基础币种集合，用于过滤涨幅榜。
-    成功返回 set(str)，失败返回 None（调用方应跳过过滤以保证监控不中断）。"""
-    endpoints = [
-        "https://fapi.binance.com/fapi/v1/exchangeInfo",
-        "https://fapi.com/fapi/v1/exchangeInfo",
-    ]
-    last_err = None
-    for url in endpoints:
-        try:
-            req = urllib.request.Request(url, headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req, timeout=20) as resp:
-                data = json.loads(resp.read().decode("utf-8"))
-            symbols = set()
-            for s in data.get("symbols", []):
-                if (
-                    s.get("contractType") == "PERPETUAL"
-                    and s.get("quoteAsset") == "USDT"
-                    and s.get("status") == "TRADING"
-                ):
-                    symbols.add(s.get("baseAsset", "").upper())
-            symbols.discard("")
-            if symbols:
-                log(f"币安 USDT 永续合约品种数: {len(symbols)} (来源: {url})")
-                return symbols
-            last_err = "返回空列表"
-        except Exception as e:
-            last_err = f"{type(e).__name__}: {e}"
-            log(f"币安端点 {url} 访问失败: {last_err}")
-    log(f"获取币安永续合约列表失败，本次不过滤: {last_err}")
-    return None
 
 
 async def fetch_gainers():
@@ -117,12 +83,23 @@ async def fetch_gainers():
                 pass
 
             rows = await page.query_selector_all("table tbody tr")
-            gainers = []
+            raw_gainers = []
+            debug_count = 0
 
             for row in rows:
                 cells = await row.query_selector_all("td")
                 if len(cells) < 4:
                     continue
+
+                # 检测该行是否包含币安（Binance）交易所标识
+                row_html = (await row.inner_html()).lower()
+                has_binance = "binance" in row_html
+
+                # 调试：输出前3行的HTML片段，确认交易所标识结构
+                if debug_count < 3:
+                    snippet = row_html.replace("\n", " ")[:400]
+                    log(f"[调试] 行{debug_count+1} 含币安={has_binance} HTML片段: {snippet}")
+                    debug_count += 1
 
                 cell_texts = []
                 for cell in cells:
@@ -139,12 +116,22 @@ async def fetch_gainers():
                     change = float(change_str)
                     volume = cell_texts[4] if len(cells) > 4 else ""
 
-                    if change > 0 and rank <= TOP_N:
-                        gainers.append((rank, symbol, price, change, volume))
+                    # 多抓取候选（前30名），过滤后取前10
+                    if change > 0 and rank <= 30:
+                        raw_gainers.append((rank, symbol, price, change, volume, has_binance))
                 except (ValueError, IndexError):
                     continue
 
-            log(f"成功获取涨幅榜 Top{len(gainers)}")
+            # 过滤：仅保留币安永续合约品种，然后重新排名
+            binance_gainers = [g for g in raw_gainers if g[5]]
+            non_binance = [g[1] for g in raw_gainers if not g[5]]
+            log(f"涨幅榜候选{len(raw_gainers)}个，其中币安永续合约{len(binance_gainers)}个")
+            if non_binance:
+                log(f"过滤掉非币安品种: {', '.join(non_binance)}")
+
+            # 重新排名（从1开始），取前 TOP_N
+            gainers = [(i + 1, g[1], g[2], g[3], g[4]) for i, g in enumerate(binance_gainers[:TOP_N])]
+            log(f"最终涨幅榜 Top{len(gainers)}（仅币安永续合约）")
             return gainers
 
         except Exception as e:
@@ -599,20 +586,6 @@ async def main():
     if not gainers:
         log("未能获取涨幅榜数据，本次跳过")
         sys.exit(1)
-
-    # 过滤：仅保留币安 USDT 永续合约品种
-    binance_perp = fetch_binance_perpetual_symbols()
-    if binance_perp is not None:
-        filtered = [g for g in gainers if g[1].upper() in binance_perp]
-        removed = [g[1] for g in gainers if g[1].upper() not in binance_perp]
-        if removed:
-            log(f"过滤掉非币安永续合约品种: {', '.join(removed)}")
-        # 重新排名（从1开始），取前 TOP_N
-        gainers = [(i + 1, g[1], g[2], g[3], g[4]) for i, g in enumerate(filtered[:TOP_N])]
-        log(f"过滤后涨幅榜数量: {len(gainers)}")
-        if not gainers:
-            log("过滤后无符合条件的币种，本次跳过")
-            sys.exit(1)
 
     data = load_data()
     report = update_and_report(gainers, data)
