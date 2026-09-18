@@ -11,8 +11,13 @@ import json
 import os
 import re
 import sys
+import urllib.request
 from datetime import datetime, timedelta, timezone
 from playwright.async_api import async_playwright
+
+# PushPlus 微信推送配置
+PUSHPLUS_TOKEN = "d9c87f5defc04e54a0ab236ca6b08018"
+PUSHPLUS_URL = "http://www.pushplus.plus/send"
 
 # ============== 配置区 ==============
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -131,6 +136,30 @@ async def fetch_gainers():
             return []
         finally:
             await browser.close()
+
+
+def push_wechat(title, content):
+    """通过 PushPlus 推送消息到微信"""
+    try:
+        payload = json.dumps({
+            "token": PUSHPLUS_TOKEN,
+            "title": title,
+            "content": content,
+            "template": "html"
+        }).encode("utf-8")
+        req = urllib.request.Request(
+            PUSHPLUS_URL,
+            data=payload,
+            headers={"Content-Type": "application/json"}
+        )
+        with urllib.request.urlopen(req, timeout=15) as resp:
+            result = json.loads(resp.read().decode())
+            if result.get("code") == 200:
+                log("✅ 微信推送成功")
+            else:
+                log(f"⚠️ 微信推送失败: {result.get('msg', 'unknown')}")
+    except Exception as e:
+        log(f"⚠️ 微信推送异常: {e}")
 
 
 def load_data():
@@ -278,6 +307,20 @@ def update_and_report(gainers, data):
     new_coins = [s for s in current_symbols if data["coins"][s]["first_seen"] == now_str]
     if new_coins:
         lines.append(f"  本轮新上榜币种 ({len(new_coins)}个): {', '.join(sorted(new_coins))}")
+        # 推送到微信
+        push_html = f"<h3>🚨 新币种上榜提醒 ({len(new_coins)}个)</h3>"
+        push_html += f"<p>时间: {now_str}</p><hr>"
+        for rank, symbol, price, change, volume, exchange in gainers:
+            if symbol in new_coins:
+                push_html += f"<div style='margin:8px 0;padding:8px;background:#1a2332;border-radius:6px;'>"
+                push_html += f"<b style='font-size:16px'>#{rank} {symbol}</b>"
+                push_html += f"<span style='float:right;color:#ff4d4f;font-weight:bold'>{change:+.2f}%</span><br>"
+                push_html += f"现价: {format_price(price)}<br>"
+                if exchange:
+                    push_html += f"交易所: {exchange}<br>"
+                push_html += f"</div>"
+        push_html += f"<p><a href='https://woya187.github.io/coinglass-monitor/'>查看完整榜单 →</a></p>"
+        push_wechat(f"🚨 {len(new_coins)}个新币种上榜", push_html)
 
     lines.append("")
     lines.append("=" * 100)
