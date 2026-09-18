@@ -297,27 +297,7 @@ def update_and_report(gainers, data):
 
     lines.append("")
     lines.append("-" * 100)
-    lines.append("监控统计:")
-
-    long_listing = []
-    for symbol, coin in data["coins"].items():
-        if symbol in current_symbols:
-            first_seen_time = datetime.strptime(coin["first_seen"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
-            if (now - first_seen_time).total_seconds() >= 3600:
-                long_listing.append((symbol, coin))
-
-    if long_listing:
-        lines.append(f"  在榜超过1小时的币种 ({len(long_listing)}个):")
-        for symbol, coin in sorted(long_listing, key=lambda x: x[1].get("best_rank", 99)):
-            first_price = coin["first_seen_price"]
-            cur_price = coin["current_price"]
-            gain = ((cur_price - first_price) / first_price * 100) if first_price > 0 else 0
-            first_seen_time = datetime.strptime(coin["first_seen"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
-            dur = format_duration(now - first_seen_time)
-            lines.append(
-                f"    - {symbol}: 首次上榜 {coin['first_seen']}, "
-                f"已在榜 {dur}, 上榜后涨幅 {gain:+.2f}%, 最高排名 #{coin.get('best_rank', 'N/A')}"
-            )
+    lines.append("-" * 100)
 
     new_coins = [s for s in current_symbols if data["coins"][s]["first_seen"] == now_str]
     if new_coins:
@@ -431,31 +411,6 @@ def generate_html_report(gainers, data):
         dropped_html = f'<div class="dropped"><div class="drop-title">📉 本轮掉出 Top{TOP_N}</div>{items}</div>'
     else:
         dropped_html = ""
-
-    long_listing = []
-    for symbol, coin in data["coins"].items():
-        if symbol in current_symbols:
-            try:
-                first_seen_time = datetime.strptime(coin["first_seen"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
-                if (now - first_seen_time).total_seconds() >= 3600:
-                    long_listing.append((symbol, coin))
-            except Exception:
-                pass
-
-    stats_html = ""
-    if long_listing:
-        items = ""
-        for symbol, coin in sorted(long_listing, key=lambda x: x[1].get("best_rank", 99)):
-            fp = coin["first_seen_price"]
-            cp = coin["current_price"]
-            g = ((cp - fp) / fp * 100) if fp > 0 else 0
-            gc = "up" if g >= 0 else "down"
-            items += f'<div class="stat-item"><span class="stat-symbol">{symbol}</span><span class="stat-gain {gc}">{g:+.2f}%</span><span class="stat-rank">最高#{coin.get("best_rank","-")}</span></div>'
-        stats_html = f"""
-        <div class="stats-section">
-            <div class="stats-title">⏱ 在榜超过1小时 ({len(long_listing)}个)</div>
-            {items}
-        </div>"""
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -673,7 +628,6 @@ body {{
     {"".join(rows_html)}
 </div>
 {dropped_html}
-{stats_html}
 <div class="footer">
     数据来源: CoinGlass · GitHub Actions 每小时自动监控 · 24h 涨幅榜 Top{TOP_N}
 </div>
