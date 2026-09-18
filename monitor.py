@@ -284,9 +284,16 @@ def update_and_report(gainers, data):
     if dropped:
         lines.append("")
         lines.append(f"  本轮掉出涨幅榜 Top{TOP_N}:")
+        drop_html = f"<h3>📉 {len(dropped)}个币种退出涨幅榜</h3><p>时间: {now_str}</p><hr>"
         for s in dropped:
             c = data["coins"][s]
-            lines.append(f"    {s}: 在榜 {c.get('total_duration', 'N/A')}, 最高排名 #{c.get('best_rank', 'N/A')}")
+            dur = c.get('total_duration', 'N/A')
+            best = c.get('best_rank', 'N/A')
+            lines.append(f"    {s}: 在榜 {dur}, 最高排名 #{best}")
+            drop_html += f"<div style='margin:6px 0;padding:6px;background:#2a1a1a;border-radius:4px;'>"
+            drop_html += f"<b>{s}</b> 在榜 {dur} · 最高 #{best}</div>"
+        drop_html += f"<p><a href='https://woya187.github.io/coinglass-monitor/'>查看完整榜单 →</a></p>"
+        push_wechat(f"📉 {len(dropped)}个币种退出涨幅榜", drop_html)
 
     lines.append("")
     lines.append("-" * 100)
