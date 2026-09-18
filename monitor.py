@@ -290,7 +290,7 @@ def update_and_report(gainers, data):
                     "final_change": coin.get("current_change", 0),
                 })
         # 最多保留50条，最新的在前面
-        data["exit_history"] = sorted(data["exit_history"], key=lambda x: x["exited_time"], reverse=True)[:50]
+        data["exit_history"] = sorted(data.get("exit_history", []), key=lambda x: x["exited_time"], reverse=True)[:50]
 
     if dropped:
         lines.append("")
