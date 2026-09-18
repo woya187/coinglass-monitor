@@ -297,6 +297,7 @@ def update_and_report(gainers, data):
                     "exited_time": now_str,
                     "total_duration": coin["total_duration"],
                     "best_rank": coin.get("best_rank", "N/A"),
+                    "first_change": coin.get("first_seen_change", 0),
                     "final_price": coin.get("current_price", 0),
                     "final_change": coin.get("current_change", 0),
                 })
@@ -440,7 +441,7 @@ def generate_html_report(gainers, data):
         items = "".join(
             f'<div class="drop-item">'
             f'<span class="drop-symbol">{e["symbol"]}</span>'
-            f'<span class="drop-info">在榜 {e["total_duration"]} · 最高 #{e["best_rank"]}</span>'
+            f'<span class="drop-info">在榜 {e["total_duration"]} · 最高 #{e["best_rank"]} · 上榜 {e.get("first_change",0):+.1f}% → 退出 {e.get("final_change",0):+.1f}%</span>'
             f'<span class="drop-time">{e["exited_time"][5:16]}</span>'
             f'</div>'
             for e in exit_history[:50]
