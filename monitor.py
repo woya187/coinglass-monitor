@@ -219,6 +219,8 @@ def update_and_report(gainers, data):
     )
     lines.append("-" * 110)
 
+    last_update = data.get("last_update")
+
     for rank, symbol, price, change, volume, exchange in gainers:
         current_symbols.add(symbol)
         is_new = False
@@ -241,6 +243,15 @@ def update_and_report(gainers, data):
             }
         else:
             coin = data["coins"][symbol]
+            # 判断是否重新进入榜单（上次不在榜，这次又回来）
+            if last_update and coin.get("last_seen") != last_update:
+                is_new = True
+                coin["first_seen"] = now_str
+                coin["first_seen_price"] = price
+                coin["first_seen_change"] = change
+                coin["best_rank"] = rank
+                coin["appearances"] = 1
+                coin["rank_history"] = []
             coin["last_seen"] = now_str
             coin["current_price"] = price
             coin["current_change"] = change
