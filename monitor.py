@@ -164,13 +164,13 @@ def push_wechat(title, content):
 
 def load_data():
     if not os.path.exists(DATA_FILE):
-        return {"coins": {}, "last_update": None, "history": []}
+        return {"coins": {}, "last_update": None, "history": [], "exit_history": []}
     try:
         with open(DATA_FILE, "r", encoding="utf-8") as f:
             return json.load(f)
     except (json.JSONDecodeError, IOError) as e:
         log(f"加载数据失败，使用空数据: {e}")
-        return {"coins": {}, "last_update": None, "history": []}
+        return {"coins": {}, "last_update": None, "history": [], "exit_history": []}
 
 
 def save_data(data):
@@ -280,6 +280,17 @@ def update_and_report(gainers, data):
                 coin["total_duration"] = format_duration(last_t - first_t)
                 coin["exited_time"] = now_str
                 dropped.append(symbol)
+                # 加入退出历史
+                data.setdefault("exit_history", []).append({
+                    "symbol": symbol,
+                    "exited_time": now_str,
+                    "total_duration": coin["total_duration"],
+                    "best_rank": coin.get("best_rank", "N/A"),
+                    "final_price": coin.get("current_price", 0),
+                    "final_change": coin.get("current_change", 0),
+                })
+        # 最多保留50条，最新的在前面
+        data["exit_history"] = sorted(data["exit_history"], key=lambda x: x["exited_time"], reverse=True)[:50]
 
     if dropped:
         lines.append("")
@@ -397,18 +408,18 @@ def generate_html_report(gainers, data):
             </div>
         </div>""")
 
-    dropped = []
-    last_update = data.get("last_update")
-    if last_update:
-        for symbol, coin in data["coins"].items():
-            if symbol not in current_symbols and coin.get("last_seen") == last_update:
-                dropped.append((symbol, coin))
-    if dropped:
+    # 历史退出记录
+    exit_history = data.get("exit_history", [])
+    if exit_history:
         items = "".join(
-            f'<div class="drop-item"><b>{s}</b> 在榜 {c.get("total_duration", "N/A")} · 最高 #{c.get("best_rank", "N/A")}</div>'
-            for s, c in dropped
+            f'<div class="drop-item">'
+            f'<span class="drop-symbol">{e["symbol"]}</span>'
+            f'<span class="drop-info">在榜 {e["total_duration"]} · 最高 #{e["best_rank"]}</span>'
+            f'<span class="drop-time">{e["exited_time"][5:16]}</span>'
+            f'</div>'
+            for e in exit_history[:50]
         )
-        dropped_html = f'<div class="dropped"><div class="drop-title">📉 本轮掉出 Top{TOP_N}</div>{items}</div>'
+        dropped_html = f'<div class="dropped"><div class="drop-title">📉 历史退出记录 ({len(exit_history)}条)</div>{items}</div>'
     else:
         dropped_html = ""
 
@@ -536,7 +547,18 @@ body {{
     margin-top: 16px;
 }}
 .drop-title {{ font-weight: 600; margin-bottom: 6px; }}
-.drop-item {{ padding: 3px 0; color: #cc8888; }}
+.drop-item {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #3a2a2a;
+    font-size: 13px;
+}}
+.drop-item:last-child {{ border-bottom: none; }}
+.drop-symbol {{ font-weight: 600; min-width: 80px; }}
+.drop-info {{ flex: 1; color: #cc8888; padding: 0 8px; }}
+.drop-time {{ color: #886666; font-size: 11px; white-space: nowrap; }}
 .stats-section {{
     background: #1a2332;
     border-radius: 14px;
