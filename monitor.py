@@ -274,11 +274,19 @@ def update_and_report(gainers, data):
     if last_update:
         for symbol, coin in data["coins"].items():
             if symbol not in current_symbols and coin.get("last_seen") == last_update:
+                # 计算总在榜时间
+                first_t = datetime.strptime(coin["first_seen"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
+                last_t = datetime.strptime(coin["last_seen"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
+                coin["total_duration"] = format_duration(last_t - first_t)
+                coin["exited_time"] = now_str
                 dropped.append(symbol)
 
     if dropped:
         lines.append("")
-        lines.append(f"  本轮掉出涨幅榜 Top{TOP_N}: {', '.join(dropped)}")
+        lines.append(f"  本轮掉出涨幅榜 Top{TOP_N}:")
+        for s in dropped:
+            c = data["coins"][s]
+            lines.append(f"    {s}: 在榜 {c.get('total_duration', 'N/A')}, 最高排名 #{c.get('best_rank', 'N/A')}")
 
     lines.append("")
     lines.append("-" * 100)
@@ -407,8 +415,15 @@ def generate_html_report(gainers, data):
     if last_update:
         for symbol, coin in data["coins"].items():
             if symbol not in current_symbols and coin.get("last_seen") == last_update:
-                dropped.append(symbol)
-    dropped_html = f'<div class="dropped">📉 本轮掉出 Top{TOP_N}: {", ".join(dropped)}</div>' if dropped else ""
+                dropped.append((symbol, coin))
+    if dropped:
+        items = "".join(
+            f'<div class="drop-item"><b>{s}</b> 在榜 {c.get("total_duration", "N/A")} · 最高 #{c.get("best_rank", "N/A")}</div>'
+            for s, c in dropped
+        )
+        dropped_html = f'<div class="dropped"><div class="drop-title">📉 本轮掉出 Top{TOP_N}</div>{items}</div>'
+    else:
+        dropped_html = ""
 
     long_listing = []
     for symbol, coin in data["coins"].items():
@@ -558,6 +573,8 @@ body {{
     color: #ff7875;
     margin-top: 16px;
 }}
+.drop-title {{ font-weight: 600; margin-bottom: 6px; }}
+.drop-item {{ padding: 3px 0; color: #cc8888; }}
 .stats-section {{
     background: #1a2332;
     border-radius: 14px;
