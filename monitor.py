@@ -317,14 +317,11 @@ def update_and_report(gainers, data):
             gain = ((cp - fp) / fp * 100) if fp > 0 else 0
             lines.append(f"    {s}: 在榜 {dur}, 最高排名 #{best}")
             drop_html += f"<div style='margin:8px 0;padding:8px;background:#2a1a1a;border-radius:6px;border-left:3px solid #ff7875;'>"
-            drop_html += f"<b style='font-size:16px'>{s}</b>"
-            drop_html += f"<table style='width:100%;font-size:13px;color:#aaa;margin-top:4px;'>"
-            drop_html += f"<tr><td>总在榜</td><td style='text-align:right;color:#fff'>{dur}</td></tr>"
-            drop_html += f"<tr><td>最高排名</td><td style='text-align:right;color:#fff'>#{best}</td></tr>"
-            drop_html += f"<tr><td>上榜时价</td><td style='text-align:right'>{format_price(fp)}</td></tr>"
-            drop_html += f"<tr><td>退出时价</td><td style='text-align:right'>{format_price(cp)}</td></tr>"
-            drop_html += f"<tr><td>上榜后涨跌</td><td style='text-align:right;color:{'#ff4d4f' if gain >= 0 else '#52c41a'};font-weight:bold'>{gain:+.2f}%</td></tr>"
-            drop_html += f"</table></div>"
+            drop_html += f"<p style='font-size:16px;font-weight:bold;color:#fff;margin:0 0 4px 0;'>{s}</p>"
+            drop_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>总在榜: {dur} · 最高 #{best}</p>"
+            drop_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>上榜时价: {format_price(fp)} → 退出时价: {format_price(cp)}</p>"
+            drop_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>上榜后涨跌: <span style='color:{'#ff4d4f' if gain >= 0 else '#52c41a'};font-weight:bold'>{gain:+.2f}%</span></p>"
+            drop_html += f"</div>"
         drop_html += f"<p style='margin-top:12px;text-align:center;'><a href='https://woya187.github.io/coinglass-monitor/' style='color:#f7931a;'>查看完整榜单 →</a></p>"
         push_wechat(f"📉 {len(dropped)}个币种退出涨幅榜", drop_html)
 
@@ -341,16 +338,11 @@ def update_and_report(gainers, data):
         for rank, symbol, price, change, volume, exchange in gainers:
             if symbol in new_coins:
                 push_html += f"<div style='margin:10px 0;padding:10px;background:#1a2332;border-radius:8px;border-left:3px solid #f7931a;'>"
-                push_html += f"<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;'>"
-                push_html += f"<b style='font-size:17px'>#{rank} {symbol}</b>"
-                push_html += f"<span style='color:#ff4d4f;font-weight:bold;font-size:18px'>{change:+.2f}%</span>"
-                push_html += f"</div>"
-                push_html += f"<table style='width:100%;font-size:13px;color:#aaa;margin-top:4px;'>"
-                push_html += f"<tr><td>现价</td><td style='text-align:right;color:#fff;font-weight:bold'>{format_price(price)}</td></tr>"
-                push_html += f"<tr><td>24h成交额</td><td style='text-align:right'>{volume}</td></tr>"
+                push_html += f"<p style='font-size:17px;font-weight:bold;color:#fff;margin:0 0 6px 0;'>#{rank} {symbol} <span style='color:#ff4d4f;font-size:18px'>{change:+.2f}%</span></p>"
+                push_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>现价: {format_price(price)}</p>"
+                push_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>24h成交额: {volume}</p>"
                 if exchange:
-                    push_html += f"<tr><td>主要交易所</td><td style='text-align:right'>{exchange}</td></tr>"
-                push_html += f"</table>"
+                    push_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>主要交易所: {exchange}</p>"
                 push_html += f"</div>"
         push_html += f"<p style='margin-top:12px;text-align:center;'><a href='https://woya187.github.io/coinglass-monitor/' style='color:#f7931a;'>查看完整榜单 →</a></p>"
         push_wechat(f"🚨 {len(new_coins)}个新币种上榜", push_html)
