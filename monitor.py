@@ -25,7 +25,7 @@ DATA_FILE = os.path.join(SCRIPT_DIR, "gainers_data.json")
 OUTPUT_FILE = os.path.join(SCRIPT_DIR, "gainers_report.txt")
 HTML_FILE = os.path.join(SCRIPT_DIR, "docs", "index.html")
 LOG_FILE = os.path.join(SCRIPT_DIR, "monitor.log")
-TOP_N = 20
+TOP_N = 10
 # ====================================
 
 TZ = timezone(timedelta(hours=8))
