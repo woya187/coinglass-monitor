@@ -297,9 +297,8 @@ def update_and_report(gainers, data):
                     "exited_time": now_str,
                     "total_duration": coin["total_duration"],
                     "best_rank": coin.get("best_rank", "N/A"),
-                    "first_change": coin.get("first_seen_change", 0),
+                    "first_price": coin.get("first_seen_price", 0),
                     "final_price": coin.get("current_price", 0),
-                    "final_change": coin.get("current_change", 0),
                 })
         # 最多保留50条，最新的在前面
         data["exit_history"] = sorted(data.get("exit_history", []), key=lambda x: x["exited_time"], reverse=True)[:50]
@@ -430,14 +429,21 @@ def generate_html_report(gainers, data):
     # 历史退出记录
     exit_history = data.get("exit_history", [])
     if exit_history:
-        items = "".join(
-            f'<div class="drop-item">'
-            f'<span class="drop-symbol">{e["symbol"]}</span>'
-            f'<span class="drop-info">在榜 {e["total_duration"]} · 最高 #{e["best_rank"]} · 上榜 {e.get("first_change",0):+.1f}% → 退出 {e.get("final_change",0):+.1f}%</span>'
-            f'<span class="drop-time">{e["exited_time"][5:16]}</span>'
-            f'</div>'
-            for e in exit_history[:50]
-        )
+        items = ""
+        for e in exit_history[:50]:
+            fp = e.get("first_price", 0)
+            cp = e.get("final_price", 0)
+            pct = ((cp - fp) / fp * 100) if fp > 0 else 0
+            pct_color = "#ff4d4f" if pct >= 0 else "#52c41a"
+            items += (
+                f'<div class="drop-item">'
+                f'<span class="drop-symbol">{e["symbol"]}</span>'
+                f'<span class="drop-info">在榜 {e["total_duration"]} · 最高 #{e["best_rank"]}<br>'
+                f'上榜 {format_price(fp)} → 退出 {format_price(cp)} '
+                f'<span style="color:{pct_color};font-weight:bold">{pct:+.2f}%</span></span>'
+                f'<span class="drop-time">{e["exited_time"][5:16]}</span>'
+                f'</div>'
+            )
         dropped_html = f'<div class="dropped"><div class="drop-title">📉 历史退出记录 ({len(exit_history)}条)</div>{items}</div>'
     else:
         dropped_html = ""
@@ -575,8 +581,8 @@ body {{
     font-size: 13px;
 }}
 .drop-item:last-child {{ border-bottom: none; }}
-.drop-symbol {{ font-weight: 600; min-width: 80px; }}
-.drop-info {{ flex: 1; color: #cc8888; padding: 0 8px; }}
+.drop-symbol {{ font-weight: 600; min-width: 70px; }}
+.drop-info {{ flex: 1; color: #cc8888; padding: 0 8px; font-size: 12px; line-height: 1.6; }}
 .drop-time {{ color: #886666; font-size: 11px; white-space: nowrap; }}
 .stats-section {{
     background: #1a2332;
