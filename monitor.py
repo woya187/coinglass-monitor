@@ -320,6 +320,28 @@ def update_and_report(gainers, data):
             drop_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>总在榜: {dur} · 最高 #{best}</p>"
             drop_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>上榜时价: {format_price(fp)} → 退出时价: {format_price(cp)}</p>"
             drop_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>上榜后涨跌: <span style='color:{'#ff4d4f' if gain >= 0 else '#52c41a'};font-weight:bold'>{gain:+.2f}%</span></p>"
+            # 在榜超过10小时，生成历史价格表
+            try:
+                first_t = datetime.strptime(c["first_seen"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
+                last_t = datetime.strptime(c["last_seen"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
+                hours = (last_t - first_t).total_seconds() / 3600
+                if hours >= 10:
+                    hist = c.get("rank_history", [])
+                    drop_html += f"<p style='font-size:13px;color:#888;margin:6px 0 4px 0;'>📊 在榜期间价格走势（{len(hist)}次记录）：</p>"
+                    drop_html += "<table style='width:100%;font-size:12px;border-collapse:collapse;'>"
+                    drop_html += "<tr style='color:#888;'><td style='padding:3px;border-bottom:1px solid #333'>时间</td><td style='padding:3px;border-bottom:1px solid #333'>价格</td><td style='padding:3px;border-bottom:1px solid #333;text-align:center'>排名</td><td style='padding:3px;border-bottom:1px solid #333;text-align:right'>在榜时长</td></tr>"
+                    for h in hist:
+                        h_time = datetime.strptime(h["time"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=TZ)
+                        h_dur = format_duration(h_time - first_t)
+                        h_pct = ((h["price"] - fp) / fp * 100) if fp > 0 else 0
+                        h_color = "#ff4d4f" if h_pct >= 0 else "#52c41a"
+                        drop_html += f"<tr><td style='padding:2px;border-bottom:1px solid #2a2a2a'>{h['time'][5:16]}</td>"
+                        drop_html += f"<td style='padding:2px;border-bottom:1px solid #2a2a2a'>{format_price(h['price'])}</td>"
+                        drop_html += f"<td style='padding:2px;border-bottom:1px solid #2a2a2a;text-align:center'>#{h['rank']}</td>"
+                        drop_html += f"<td style='padding:2px;border-bottom:1px solid #2a2a2a;text-align:right;color:{h_color}'>{h_dur}</td></tr>"
+                    drop_html += "</table>"
+            except Exception as e:
+                log(f"生成历史表格失败: {e}")
             drop_html += f"</div>"
         drop_html += f"<p style='margin-top:12px;text-align:center;'><a href='https://woya187.github.io/coinglass-monitor/' style='color:#f7931a;'>查看完整榜单 →</a></p>"
         push_wechat(f"📉 {len(dropped)}个币种退出涨幅榜", drop_html)
