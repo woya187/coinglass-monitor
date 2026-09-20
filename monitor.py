@@ -130,55 +130,84 @@ async def fetch_gainers():
 
             log(f"成功获取涨幅榜 Top{len(gainers)}")
 
-            # 从币安获取全部USDT交易对，计算15分钟振幅
+            # 切换到15分钟窗口，抓取CoinGlass合约品种涨跌幅
+            cg_15m_symbols = []  # (symbol, change_pct)
+            try:
+                btn_15m = page.get_by_text("15分钟", exact=True)
+                if await btn_15m.count() > 0:
+                    await btn_15m.first.click()
+                    await page.wait_for_timeout(2000)
+
+                rows_15m = await page.query_selector_all("table tbody tr")
+                seen_syms = set()
+                for row in rows_15m:
+                    cells = await row.query_selector_all("td")
+                    if len(cells) < 4:
+                        continue
+                    try:
+                        symbol = (await cells[1].inner_text()).strip()
+                        change_str = (await cells[3].inner_text()).strip().replace("%", "").replace(",", "")
+                        if symbol not in seen_syms:
+                            seen_syms.add(symbol)
+                            cg_15m_symbols.append((symbol, float(change_str)))
+                    except (ValueError, IndexError):
+                        continue
+                log(f"CoinGlass 15分钟合约品种共 {len(cg_15m_symbols)} 个")
+            except Exception as e:
+                log(f"15分钟切换失败: {e}")
+
+            # 用币安现货K线计算振幅（只对CoinGlass合约品种）
             amplitude_top = []
+            surge_list = []
             try:
                 import urllib.request as _urllib
                 import json as _json
-                # 获取所有USDT交易对
-                with _urllib.urlopen("https://data-api.binance.vision/api/v3/exchangeInfo", timeout=10) as resp:
-                    exinfo = _json.loads(resp.read())
-                usdt_symbols = [s["symbol"] for s in exinfo["symbols"]
-                               if s.get("quoteAsset") == "USDT" and s.get("status") == "TRADING"]
-                log(f"币安USDT交易对共 {len(usdt_symbols)} 个")
-
-                # 并发获取15分钟K线
                 import concurrent.futures as _cf
 
-                def _fetch_amp(bn_sym):
+                def _fetch_amp(item):
+                    symbol, cg_change = item
                     try:
+                        bn_sym = symbol.upper() + "USDT"
                         url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=2"
                         with _urllib.urlopen(url, timeout=5) as resp:
                             data = _json.loads(resp.read())
                             if data and len(data) >= 2:
                                 k = data[-2]
+                                open_price = float(k[1])
                                 high = float(k[2])
                                 low = float(k[3])
                                 close = float(k[4])
-                                if low > 0:
+                                if low > 0 and open_price > 0:
                                     amp = (high - low) / low * 100
-                                    sym = bn_sym.replace("USDT", "")
-                                    return (sym, close, high, low, amp)
+                                    chg = (close - open_price) / open_price * 100
+                                    return (symbol, close, high, low, amp, chg, "kline")
                     except Exception:
-                        return None
+                        pass
+                    # 币安没有该交易对，用CoinGlass涨跌幅作为近似振幅
+                    return (symbol, 0, 0, 0, abs(cg_change), cg_change, "coinglass")
 
                 amp_list = []
                 with _cf.ThreadPoolExecutor(max_workers=20) as executor:
-                    for result in executor.map(_fetch_amp, usdt_symbols):
+                    for result in executor.map(_fetch_amp, cg_15m_symbols):
                         if result:
                             amp_list.append(result)
 
                 amp_list.sort(key=lambda x: x[4], reverse=True)
                 amplitude_top = amp_list[:10]
                 log(f"15分钟振幅前10: {amplitude_top[0][0]} {amplitude_top[0][4]:.2f}%")
+
+                # 15分钟涨幅超过25%的币种
+                surge_list = [x for x in amp_list if x[5] >= 25]
+                surge_list.sort(key=lambda x: x[5], reverse=True)
+                log(f"15分钟涨幅>25%: {len(surge_list)} 个")
             except Exception as e:
                 log(f"振幅计算失败: {e}")
 
-            return gainers, amplitude_top
+            return gainers, amplitude_top, surge_list
 
         except Exception as e:
             log(f"抓取异常: {type(e).__name__}: {e}")
-            return [], []
+            return [], [], []
         finally:
             await browser.close()
 
@@ -432,7 +461,7 @@ def update_and_report(gainers, data):
     return "\n".join(lines)
 
 
-def generate_html_report(gainers, data, amplitude_top=None):
+def generate_html_report(gainers, data, amplitude_top=None, surge_list=None):
     """生成手机端友好的 HTML 报告"""
     now = get_now()
     now_str = get_now_str()
@@ -519,18 +548,41 @@ def generate_html_report(gainers, data, amplitude_top=None):
     amplitude_html = ""
     if amplitude_top:
         amp_items = ""
-        for i, (sym, price, high, low, amp) in enumerate(amplitude_top, 1):
+        for i, item in enumerate(amplitude_top, 1):
+            sym, price, high, low, amp, chg, source = item
+            price_str = format_price(price) if price > 0 else "—"
+            src_tag = "CG" if source == "coinglass" else ""
             amp_items += f"""
             <div class="amp-row">
                 <span class="amp-rank">{i}</span>
-                <span class="amp-name">{sym}</span>
-                <span class="amp-price">{format_price(price)}</span>
+                <span class="amp-name">{sym} {src_tag}</span>
+                <span class="amp-price">{price_str}</span>
                 <span class="amp-val">{amp:.2f}%</span>
             </div>"""
         amplitude_html = f"""
         <div class="amp-section">
-            <div class="amp-title">⚡ 15分钟振幅 Top10</div>
+            <div class="amp-title">⚡ 15分钟振幅 Top10（合约品种）</div>
             {amp_items}
+        </div>"""
+
+    # 15分钟涨幅>25%区域
+    surge_html = ""
+    if surge_list:
+        surge_items = ""
+        for item in surge_list:
+            sym, price, high, low, amp, chg, source = item
+            price_str = format_price(price) if price > 0 else "—"
+            src_tag = "CG" if source == "coinglass" else ""
+            surge_items += f"""
+            <div class="amp-row surge">
+                <span class="amp-name">{sym} {src_tag}</span>
+                <span class="amp-price">{price_str}</span>
+                <span class="amp-val surge-val">+{chg:.2f}%</span>
+            </div>"""
+        surge_html = f"""
+        <div class="amp-section">
+            <div class="amp-title">🚀 15分钟涨幅 >25%（{len(surge_list)}个）</div>
+            {surge_items}
         </div>"""
 
     html = f"""<!DOCTYPE html>
@@ -731,6 +783,8 @@ body {{
 .amp-name {{ flex: 1; font-weight: 600; }}
 .amp-price {{ color: #8899a6; margin-right: 12px; font-size: 12px; }}
 .amp-val {{ color: #f7931a; font-weight: 700; font-size: 14px; }}
+.amp-row.surge {{ background: rgba(255,107,107,0.08); border-left: 3px solid #ff6b6b; }}
+.surge-val {{ color: #ff6b6b !important; }}
 /* 手机端优化：纵向布局 */
 @media (max-width: 599px) {{
     body {{ padding: 12px 10px; }}
@@ -792,6 +846,7 @@ body {{
     {"".join(rows_html)}
 </div>
 {amplitude_html}
+{surge_html}
 {dropped_html}
 <div class="footer">
     数据来源: CoinGlass · GitHub Actions 每小时自动监控 · 24h 涨幅榜 Top{TOP_N}
@@ -846,7 +901,7 @@ async def main():
 
     # 保存HTML报告
     try:
-        html_report = generate_html_report(gainers, data, amplitude_top)
+        html_report = generate_html_report(gainers, data, amplitude_top, surge_list)
         with open(HTML_FILE, "w", encoding="utf-8") as f:
             f.write(html_report)
         log("HTML报告已保存")
