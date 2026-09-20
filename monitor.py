@@ -130,57 +130,43 @@ async def fetch_gainers():
 
             log(f"成功获取涨幅榜 Top{len(gainers)}")
 
-            # 切换到15分钟窗口，抓取15分钟涨幅前50币种，用于计算振幅
-            amp_symbols = []
-            try:
-                btn_15m = page.get_by_text("15分钟", exact=True)
-                if await btn_15m.count() > 0:
-                    await btn_15m.first.click()
-                    await page.wait_for_timeout(2000)
-
-                rows_15m = await page.query_selector_all("table tbody tr")
-                seen_syms = set()
-                for row in rows_15m:
-                    cells = await row.query_selector_all("td")
-                    if len(cells) < 3:
-                        continue
-                    try:
-                        symbol = (await cells[1].inner_text()).strip()
-                        price_str = (await cells[2].inner_text()).strip().replace("$", "").replace(",", "")
-                        if symbol not in seen_syms:
-                            seen_syms.add(symbol)
-                            amp_symbols.append((symbol, float(price_str)))
-                    except (ValueError, IndexError):
-                        continue
-
-                log(f"15分钟涨跌幅榜共获取 {len(amp_symbols)} 个币种（含涨跌）")
-            except Exception as e:
-                log(f"15分钟切换失败: {e}")
-
-            # 用币安K线计算15分钟真实振幅 = (最高-最低)/最低
+            # 直接从币安获取全部USDT永续合约，计算15分钟振幅
             amplitude_top = []
-            if amp_symbols:
+            try:
                 import urllib.request as _urllib
                 import json as _json
-                for symbol, cur_price in amp_symbols:
+                # 获取所有USDT永续合约
+                with _urllib.urlopen("https://fapi.binance.com/fapi/v1/exchangeInfo", timeout=10) as resp:
+                    exinfo = _json.loads(resp.read())
+                perp_symbols = [s["symbol"] for s in exinfo["symbols"]
+                               if s.get("contractType") == "PERPETUAL" and s.get("quoteAsset") == "USDT"
+                               and s.get("status") == "TRADING"]
+                log(f"币安USDT永续合约共 {len(perp_symbols)} 个")
+
+                # 批量获取15分钟K线
+                amp_list = []
+                for bn_sym in perp_symbols:
                     try:
-                        bn_sym = symbol.upper() + "USDT"
-                        url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=2"
+                        url = f"https://fapi.binance.com/fapi/v1/klines?symbol={bn_sym}&interval=15m&limit=2"
                         with _urllib.urlopen(url, timeout=5) as resp:
                             data = _json.loads(resp.read())
                             if data and len(data) >= 2:
-                                k = data[-2]  # 上一根已完成的15分钟K线
+                                k = data[-2]
                                 high = float(k[2])
                                 low = float(k[3])
+                                close = float(k[4])
                                 if low > 0:
                                     amp = (high - low) / low * 100
-                                    amplitude_top.append((symbol, cur_price, high, low, amp))
+                                    sym = bn_sym.replace("USDT", "")
+                                    amp_list.append((sym, close, high, low, amp))
                     except Exception:
                         continue
-                amplitude_top.sort(key=lambda x: x[4], reverse=True)
-                amplitude_top = amplitude_top[:10]
-                if amplitude_top:
-                    log(f"15分钟振幅前10: {amplitude_top[0][0]} {amplitude_top[0][4]:.2f}%")
+
+                amp_list.sort(key=lambda x: x[4], reverse=True)
+                amplitude_top = amp_list[:10]
+                log(f"15分钟振幅前10: {amplitude_top[0][0]} {amplitude_top[0][4]:.2f}%")
+            except Exception as e:
+                log(f"振幅计算失败: {e}")
 
             return gainers, amplitude_top
 
