@@ -142,9 +142,10 @@ async def fetch_gainers():
                                if s.get("quoteAsset") == "USDT" and s.get("status") == "TRADING"]
                 log(f"币安USDT交易对共 {len(usdt_symbols)} 个")
 
-                # 批量获取15分钟K线
-                amp_list = []
-                for bn_sym in usdt_symbols:
+                # 并发获取15分钟K线
+                import concurrent.futures as _cf
+
+                def _fetch_amp(bn_sym):
                     try:
                         url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=2"
                         with _urllib.urlopen(url, timeout=5) as resp:
@@ -157,9 +158,15 @@ async def fetch_gainers():
                                 if low > 0:
                                     amp = (high - low) / low * 100
                                     sym = bn_sym.replace("USDT", "")
-                                    amp_list.append((sym, close, high, low, amp))
+                                    return (sym, close, high, low, amp)
                     except Exception:
-                        continue
+                        return None
+
+                amp_list = []
+                with _cf.ThreadPoolExecutor(max_workers=20) as executor:
+                    for result in executor.map(_fetch_amp, usdt_symbols):
+                        if result:
+                            amp_list.append(result)
 
                 amp_list.sort(key=lambda x: x[4], reverse=True)
                 amplitude_top = amp_list[:10]
