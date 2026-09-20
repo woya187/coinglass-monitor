@@ -139,18 +139,21 @@ async def fetch_gainers():
                     await page.wait_for_timeout(2000)
 
                 rows_15m = await page.query_selector_all("table tbody tr")
-                for row in rows_15m[:50]:
+                seen_syms = set()
+                for row in rows_15m:
                     cells = await row.query_selector_all("td")
                     if len(cells) < 3:
                         continue
                     try:
                         symbol = (await cells[1].inner_text()).strip()
                         price_str = (await cells[2].inner_text()).strip().replace("$", "").replace(",", "")
-                        amp_symbols.append((symbol, float(price_str)))
+                        if symbol not in seen_syms:
+                            seen_syms.add(symbol)
+                            amp_symbols.append((symbol, float(price_str)))
                     except (ValueError, IndexError):
                         continue
 
-                log(f"15分钟涨幅榜获取 {len(amp_symbols)} 个币种")
+                log(f"15分钟涨跌幅榜共获取 {len(amp_symbols)} 个币种（含涨跌）")
             except Exception as e:
                 log(f"15分钟切换失败: {e}")
 
@@ -159,7 +162,7 @@ async def fetch_gainers():
             if amp_symbols:
                 import urllib.request as _urllib
                 import json as _json
-                for symbol, cur_price in amp_symbols[:50]:
+                for symbol, cur_price in amp_symbols:
                     try:
                         bn_sym = symbol.upper() + "USDT"
                         url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=1"
