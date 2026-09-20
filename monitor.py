@@ -158,13 +158,14 @@ async def fetch_gainers():
             amplitude_top = []
             if amp_symbols:
                 import urllib.request as _urllib
+                import json as _json
                 for symbol, cur_price in amp_symbols[:50]:
                     try:
                         bn_sym = symbol.upper() + "USDT"
                         url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=1"
                         with _urllib.urlopen(url, timeout=5) as resp:
-                            data = _urllib.json.loads(resp.read())
-                            if data:
+                            data = _json.loads(resp.read())
+                            if data and len(data) > 0:
                                 k = data[0]
                                 high = float(k[2])
                                 low = float(k[3])
@@ -181,7 +182,7 @@ async def fetch_gainers():
 
         except Exception as e:
             log(f"抓取异常: {type(e).__name__}: {e}")
-            return []
+            return [], []
         finally:
             await browser.close()
 
