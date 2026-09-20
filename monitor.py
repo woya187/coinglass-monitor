@@ -165,11 +165,11 @@ async def fetch_gainers():
                 for symbol, cur_price in amp_symbols:
                     try:
                         bn_sym = symbol.upper() + "USDT"
-                        url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=1"
+                        url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=2"
                         with _urllib.urlopen(url, timeout=5) as resp:
                             data = _json.loads(resp.read())
-                            if data and len(data) > 0:
-                                k = data[0]
+                            if data and len(data) >= 2:
+                                k = data[-2]  # 上一根已完成的15分钟K线
                                 high = float(k[2])
                                 low = float(k[3])
                                 if low > 0:
