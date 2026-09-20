@@ -130,24 +130,23 @@ async def fetch_gainers():
 
             log(f"成功获取涨幅榜 Top{len(gainers)}")
 
-            # 直接从币安获取全部USDT永续合约，计算15分钟振幅
+            # 从币安获取全部USDT交易对，计算15分钟振幅
             amplitude_top = []
             try:
                 import urllib.request as _urllib
                 import json as _json
-                # 获取所有USDT永续合约
-                with _urllib.urlopen("https://fapi.binance.com/fapi/v1/exchangeInfo", timeout=10) as resp:
+                # 获取所有USDT交易对
+                with _urllib.urlopen("https://data-api.binance.vision/api/v3/exchangeInfo", timeout=10) as resp:
                     exinfo = _json.loads(resp.read())
-                perp_symbols = [s["symbol"] for s in exinfo["symbols"]
-                               if s.get("contractType") == "PERPETUAL" and s.get("quoteAsset") == "USDT"
-                               and s.get("status") == "TRADING"]
-                log(f"币安USDT永续合约共 {len(perp_symbols)} 个")
+                usdt_symbols = [s["symbol"] for s in exinfo["symbols"]
+                               if s.get("quoteAsset") == "USDT" and s.get("status") == "TRADING"]
+                log(f"币安USDT交易对共 {len(usdt_symbols)} 个")
 
                 # 批量获取15分钟K线
                 amp_list = []
-                for bn_sym in perp_symbols:
+                for bn_sym in usdt_symbols:
                     try:
-                        url = f"https://fapi.binance.com/fapi/v1/klines?symbol={bn_sym}&interval=15m&limit=2"
+                        url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=2"
                         with _urllib.urlopen(url, timeout=5) as resp:
                             data = _json.loads(resp.read())
                             if data and len(data) >= 2:
