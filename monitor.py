@@ -237,7 +237,7 @@ def format_price(price):
         return f"${price:.8f}"
 
 
-def update_and_report(gainers, data):
+def update_and_report(gainers, data, surge_list=None):
     now = get_now()
     now_str = get_now_str()
     current_symbols = set()
@@ -378,7 +378,7 @@ def update_and_report(gainers, data):
                 log(f"生成历史表格失败: {e}")
             drop_html += f"</div>"
         drop_html += f"<p style='margin-top:12px;text-align:center;'><a href='https://woya187.github.io/coinglass-monitor/' style='color:#f7931a;'>查看完整榜单 →</a></p>"
-        push_wechat(f"📉 {len(dropped)}个币种退出涨幅榜", drop_html)
+        # push_wechat(f"📉 {len(dropped)}个币种退出涨幅榜", drop_html)
 
     lines.append("")
     lines.append("-" * 100)
@@ -400,7 +400,22 @@ def update_and_report(gainers, data):
                     push_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>主要交易所: {exchange}</p>"
                 push_html += f"</div>"
         push_html += f"<p style='margin-top:12px;text-align:center;'><a href='https://woya187.github.io/coinglass-monitor/' style='color:#f7931a;'>查看完整榜单 →</a></p>"
-        push_wechat(f"🚨 {len(new_coins)}个新币种上榜", push_html)
+        # push_wechat(f"🚨 {len(new_coins)}个新币种上榜", push_html)
+
+    # 15分钟涨幅>25%推送
+    if surge_list:
+        surge_html = f"<h3>🚀 15分钟涨幅 >25%（{len(surge_list)}个合约品种）</h3>"
+        surge_html += f"<p>⏰ {now_str}</p><hr>"
+        for rank, item in enumerate(surge_list, 1):
+            sym, price, change, exchange = item
+            surge_html += f"<div style='margin:10px 0;padding:10px;background:#2a1a1a;border-radius:8px;border-left:3px solid #ff6b6b;'>"
+            surge_html += f"<p style='font-size:17px;font-weight:bold;color:#fff;margin:0 0 6px 0;'>#{rank} {sym} <span style='color:#ff4d4f;font-size:19px'>+{change:.2f}%</span></p>"
+            surge_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>现价: {format_price(price)}</p>"
+            if exchange:
+                surge_html += f"<p style='font-size:13px;color:#aaa;margin:2px 0;'>交易所: {exchange}</p>"
+            surge_html += f"</div>"
+        surge_html += f"<p style='margin-top:12px;text-align:center;'><a href='https://woya187.github.io/coinglass-monitor/' style='color:#f7931a;'>查看完整榜单 →</a></p>"
+        push_wechat(f"🚀 {len(surge_list)}个合约品种15分钟涨超25%", surge_html)
 
     lines.append("")
     lines.append("=" * 100)
@@ -825,7 +840,7 @@ async def main():
         return
 
     data = load_data()
-    report = update_and_report(gainers, data)
+    report = update_and_report(gainers, data, surge_list)
 
     print()
     print(report)
