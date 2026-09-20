@@ -129,7 +129,55 @@ async def fetch_gainers():
                     continue
 
             log(f"成功获取涨幅榜 Top{len(gainers)}")
-            return gainers
+
+            # 切换到15分钟窗口，抓取15分钟涨幅前50币种，用于计算振幅
+            amp_symbols = []
+            try:
+                btn_15m = page.get_by_text("15分钟", exact=True)
+                if await btn_15m.count() > 0:
+                    await btn_15m.first.click()
+                    await page.wait_for_timeout(2000)
+
+                rows_15m = await page.query_selector_all("table tbody tr")
+                for row in rows_15m[:50]:
+                    cells = await row.query_selector_all("td")
+                    if len(cells) < 3:
+                        continue
+                    try:
+                        symbol = (await cells[1].inner_text()).strip()
+                        price_str = (await cells[2].inner_text()).strip().replace("$", "").replace(",", "")
+                        amp_symbols.append((symbol, float(price_str)))
+                    except (ValueError, IndexError):
+                        continue
+
+                log(f"15分钟涨幅榜获取 {len(amp_symbols)} 个币种")
+            except Exception as e:
+                log(f"15分钟切换失败: {e}")
+
+            # 用币安API计算15分钟振幅
+            amplitude_top = []
+            if amp_symbols:
+                import urllib.request as _urllib
+                for symbol, cur_price in amp_symbols[:50]:
+                    try:
+                        bn_sym = symbol.upper() + "USDT"
+                        url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=1"
+                        with _urllib.urlopen(url, timeout=5) as resp:
+                            data = _urllib.json.loads(resp.read())
+                            if data:
+                                k = data[0]
+                                high = float(k[2])
+                                low = float(k[3])
+                                if low > 0:
+                                    amp = (high - low) / low * 100
+                                    amplitude_top.append((symbol, cur_price, high, low, amp))
+                    except Exception:
+                        continue
+                amplitude_top.sort(key=lambda x: x[4], reverse=True)
+                amplitude_top = amplitude_top[:10]
+                log(f"15分钟振幅前10: {amplitude_top[0][0]} {amplitude_top[0][4]:.2f}%")
+
+            return gainers, amplitude_top
 
         except Exception as e:
             log(f"抓取异常: {type(e).__name__}: {e}")
@@ -387,7 +435,7 @@ def update_and_report(gainers, data):
     return "\n".join(lines)
 
 
-def generate_html_report(gainers, data):
+def generate_html_report(gainers, data, amplitude_top=None):
     """生成手机端友好的 HTML 报告"""
     now = get_now()
     now_str = get_now_str()
@@ -469,6 +517,24 @@ def generate_html_report(gainers, data):
         dropped_html = f'<div class="dropped"><div class="drop-title">📉 历史退出记录 ({len(exit_history)}条)</div>{items}</div>'
     else:
         dropped_html = ""
+
+    # 15分钟振幅区域
+    amplitude_html = ""
+    if amplitude_top:
+        amp_items = ""
+        for i, (sym, price, high, low, amp) in enumerate(amplitude_top, 1):
+            amp_items += f"""
+            <div class="amp-row">
+                <span class="amp-rank">{i}</span>
+                <span class="amp-name">{sym}</span>
+                <span class="amp-price">¥{format_price(price)}</span>
+                <span class="amp-val">{amp:.2f}%</span>
+            </div>"""
+        amplitude_html = f"""
+        <div class="amp-section">
+            <div class="amp-title">⚡ 15分钟振幅 Top10</div>
+            {amp_items}
+        </div>"""
 
     html = f"""<!DOCTYPE html>
 <html lang="zh-CN">
@@ -636,6 +702,38 @@ body {{
     font-size: 11px;
     color: #5c6c7c;
 }}
+.amp-section {{
+    background: #1a2332;
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-top: 16px;
+}}
+.amp-title {{
+    font-size: 15px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #d0d0d0;
+}}
+.amp-row {{
+    display: flex;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid #2a3a4a;
+    font-size: 13px;
+}}
+.amp-row:last-child {{ border-bottom: none; }}
+.amp-rank {{
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: #2a3a4a;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    margin-right: 10px;
+    flex-shrink: 0;
+}}
+.amp-name {{ flex: 1; font-weight: 600; }}
+.amp-price {{ color: #8899a6; margin-right: 12px; font-size: 12px; }}
+.amp-val {{ color: #f7931a; font-weight: 700; font-size: 14px; }}
 /* 手机端优化：纵向布局 */
 @media (max-width: 599px) {{
     body {{ padding: 12px 10px; }}
@@ -696,6 +794,7 @@ body {{
 <div class="coin-list">
     {"".join(rows_html)}
 </div>
+{amplitude_html}
 {dropped_html}
 <div class="footer">
     数据来源: CoinGlass · GitHub Actions 每小时自动监控 · 24h 涨幅榜 Top{TOP_N}
@@ -712,9 +811,9 @@ async def main():
     # 确保docs目录存在
     os.makedirs(os.path.dirname(HTML_FILE), exist_ok=True)
 
-    gainers = await fetch_gainers()
+    gainers, amplitude_top = await fetch_gainers()
     if not gainers:
-        log("警告：当前涨幅榜无币安永续合约品种上榜，生成本次空报告")
+        log("警告：当前涨幅榜无数据，生成本次空报告")
         # 生成空报告，不退出
         empty_report = f"{'='*60}\n  CoinGlass 涨幅榜监控报告 | {get_now_str()}\n  （当前涨幅榜无币安永续合约品种上榜）\n{'='*60}\n"
         try:
@@ -750,7 +849,7 @@ async def main():
 
     # 保存HTML报告
     try:
-        html_report = generate_html_report(gainers, data)
+        html_report = generate_html_report(gainers, data, amplitude_top)
         with open(HTML_FILE, "w", encoding="utf-8") as f:
             f.write(html_report)
         log("HTML报告已保存")
