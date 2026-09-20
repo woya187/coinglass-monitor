@@ -142,15 +142,14 @@ async def fetch_gainers():
                 seen_syms = set()
                 for row in rows_15m:
                     cells = await row.query_selector_all("td")
-                    if len(cells) < 4:
+                    if len(cells) < 3:
                         continue
                     try:
                         symbol = (await cells[1].inner_text()).strip()
                         price_str = (await cells[2].inner_text()).strip().replace("$", "").replace(",", "")
-                        chg_str = (await cells[3].inner_text()).strip().replace("%", "").replace("+", "")
                         if symbol not in seen_syms:
                             seen_syms.add(symbol)
-                            amp_symbols.append((symbol, float(price_str), float(chg_str)))
+                            amp_symbols.append((symbol, float(price_str)))
                     except (ValueError, IndexError):
                         continue
 
@@ -158,11 +157,30 @@ async def fetch_gainers():
             except Exception as e:
                 log(f"15分钟切换失败: {e}")
 
-            # 按涨跌幅绝对值排序（涨跌都算波动）
-            amp_symbols.sort(key=lambda x: abs(x[2]), reverse=True)
-            amplitude_top = [(sym, price, 0, 0, abs(chg)) for sym, price, chg in amp_symbols[:10]]
-            if amplitude_top:
-                log(f"15分钟波动前10: {amplitude_top[0][0]} {amplitude_top[0][4]:.2f}%")
+            # 用币安K线计算15分钟真实振幅 = (最高-最低)/最低
+            amplitude_top = []
+            if amp_symbols:
+                import urllib.request as _urllib
+                import json as _json
+                for symbol, cur_price in amp_symbols:
+                    try:
+                        bn_sym = symbol.upper() + "USDT"
+                        url = f"https://data-api.binance.vision/api/v3/klines?symbol={bn_sym}&interval=15m&limit=1"
+                        with _urllib.urlopen(url, timeout=5) as resp:
+                            data = _json.loads(resp.read())
+                            if data and len(data) > 0:
+                                k = data[0]
+                                high = float(k[2])
+                                low = float(k[3])
+                                if low > 0:
+                                    amp = (high - low) / low * 100
+                                    amplitude_top.append((symbol, cur_price, high, low, amp))
+                    except Exception:
+                        continue
+                amplitude_top.sort(key=lambda x: x[4], reverse=True)
+                amplitude_top = amplitude_top[:10]
+                if amplitude_top:
+                    log(f"15分钟振幅前10: {amplitude_top[0][0]} {amplitude_top[0][4]:.2f}%")
 
             return gainers, amplitude_top
 
@@ -519,7 +537,7 @@ def generate_html_report(gainers, data, amplitude_top=None):
             </div>"""
         amplitude_html = f"""
         <div class="amp-section">
-            <div class="amp-title">⚡ 15分钟波动 Top10</div>
+            <div class="amp-title">⚡ 15分钟振幅 Top10</div>
             {amp_items}
         </div>"""
 
