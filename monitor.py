@@ -531,7 +531,7 @@ def generate_html_report(gainers, data, amplitude_top=None):
             <div class="amp-row">
                 <span class="amp-rank">{i}</span>
                 <span class="amp-name">{sym}</span>
-                <span class="amp-price">¥{format_price(price)}</span>
+                <span class="amp-price">${format_price(price)}</span>
                 <span class="amp-val">{amp:.2f}%</span>
             </div>"""
         amplitude_html = f"""
