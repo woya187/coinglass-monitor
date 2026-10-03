@@ -1022,11 +1022,11 @@
       "first_seen": "2026-10-03 21:31:39",
       "first_seen_price": 0.0024468,
       "first_seen_change": 13.5,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.0025139,
-      "current_change": 17.66,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.0025239,
+      "current_change": 17.38,
       "best_rank": 4,
-      "appearances": 5,
+      "appearances": 6,
       "rank_history": [
         {
           "time": "2026-10-03 21:31:39",
@@ -1051,6 +1051,12 @@
           "rank": 4,
           "price": 0.0025139,
           "change": 17.66
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 7,
+          "price": 0.0025239,
+          "change": 17.38
         }
       ],
       "total_duration": "2小时29分",
@@ -4294,7 +4300,7 @@
         }
       ],
       "total_duration": "0分钟",
-      "exited_time": "2026-10-03 22:01:12"
+      "exited_time": "2026-10-03 22:30:59"
     },
     "KSM": {
       "symbol": "KSM",
@@ -6607,68 +6613,20 @@
     },
     "EVAA": {
       "symbol": "EVAA",
-      "first_seen": "2026-10-03 19:01:18",
-      "first_seen_price": 0.7658,
-      "first_seen_change": 13.2,
-      "last_seen": "2026-10-03 21:01:20",
-      "current_price": 0.7664,
-      "current_change": 12.66,
-      "best_rank": 5,
-      "appearances": 10,
+      "first_seen": "2026-10-03 22:30:59",
+      "first_seen_price": 0.7792,
+      "first_seen_change": 13.06,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.7792,
+      "current_change": 13.06,
+      "best_rank": 9,
+      "appearances": 2,
       "rank_history": [
         {
-          "time": "2026-10-03 19:01:18",
-          "rank": 7,
-          "price": 0.7658,
-          "change": 13.2
-        },
-        {
-          "time": "2026-10-03 19:16:04",
-          "rank": 7,
-          "price": 0.7722,
-          "change": 14.08
-        },
-        {
-          "time": "2026-10-03 19:31:07",
-          "rank": 7,
-          "price": 0.7756,
-          "change": 14.38
-        },
-        {
-          "time": "2026-10-03 19:46:02",
-          "rank": 7,
-          "price": 0.771,
-          "change": 13.91
-        },
-        {
-          "time": "2026-10-03 20:01:18",
-          "rank": 7,
-          "price": 0.7742,
-          "change": 13.89
-        },
-        {
-          "time": "2026-10-03 20:16:09",
-          "rank": 6,
-          "price": 0.7859,
-          "change": 15.62
-        },
-        {
-          "time": "2026-10-03 20:31:04",
-          "rank": 5,
-          "price": 0.7857,
-          "change": 15.8
-        },
-        {
-          "time": "2026-10-03 20:45:58",
-          "rank": 7,
-          "price": 0.763,
-          "change": 12.53
-        },
-        {
-          "time": "2026-10-03 21:01:20",
-          "rank": 8,
-          "price": 0.7664,
-          "change": 12.66
+          "time": "2026-10-03 22:30:59",
+          "rank": 9,
+          "price": 0.7792,
+          "change": 13.06
         }
       ],
       "total_duration": "2小时0分",
@@ -12937,11 +12895,11 @@
       "first_seen": "2026-10-03 13:01:16",
       "first_seen_price": 0.04524,
       "first_seen_change": 18.54,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.04871,
-      "current_change": 27.04,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.04839,
+      "current_change": 37.89,
       "best_rank": 1,
-      "appearances": 41,
+      "appearances": 42,
       "rank_history": [
         {
           "time": "2026-10-03 13:01:16",
@@ -13182,6 +13140,12 @@
           "rank": 2,
           "price": 0.04871,
           "change": 27.04
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 1,
+          "price": 0.04839,
+          "change": 37.89
         }
       ],
       "total_duration": "17小时0分",
@@ -14071,11 +14035,11 @@
       "first_seen": "2026-10-03 13:01:16",
       "first_seen_price": 0.0452,
       "first_seen_change": 18.59,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.0486,
-      "current_change": 26.77,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.0482,
+      "current_change": 37.61,
       "best_rank": 1,
-      "appearances": 41,
+      "appearances": 42,
       "rank_history": [
         {
           "time": "2026-10-03 13:01:16",
@@ -14316,6 +14280,12 @@
           "rank": 3,
           "price": 0.0486,
           "change": 26.77
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 2,
+          "price": 0.0482,
+          "change": 37.61
         }
       ],
       "total_duration": "17小时0分",
@@ -18610,11 +18580,11 @@
       "first_seen": "2026-10-03 21:01:20",
       "first_seen_price": 0.002952,
       "first_seen_change": 45.31,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.002911,
-      "current_change": 12.31,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.003031,
+      "current_change": 17.89,
       "best_rank": 1,
-      "appearances": 7,
+      "appearances": 8,
       "rank_history": [
         {
           "time": "2026-10-03 21:01:20",
@@ -18651,6 +18621,12 @@
           "rank": 8,
           "price": 0.002911,
           "change": 12.31
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 6,
+          "price": 0.003031,
+          "change": 17.89
         }
       ],
       "total_duration": "0分钟",
@@ -22372,11 +22348,11 @@
       "first_seen": "2026-10-03 20:45:58",
       "first_seen_price": 0.007037,
       "first_seen_change": 11.41,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.00724,
-      "current_change": 12.26,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.007229,
+      "current_change": 12.32,
       "best_rank": 6,
-      "appearances": 8,
+      "appearances": 9,
       "rank_history": [
         {
           "time": "2026-10-03 20:45:58",
@@ -22419,6 +22395,12 @@
           "rank": 9,
           "price": 0.00724,
           "change": 12.26
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 10,
+          "price": 0.007229,
+          "change": 12.32
         }
       ],
       "total_duration": "0分钟",
@@ -22450,11 +22432,11 @@
       "first_seen": "2026-10-03 13:46:01",
       "first_seen_price": 0.07172,
       "first_seen_change": 13.53,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.07811,
-      "current_change": 16.36,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.07911,
+      "current_change": 19.5,
       "best_rank": 3,
-      "appearances": 38,
+      "appearances": 39,
       "rank_history": [
         {
           "time": "2026-10-03 13:46:01",
@@ -22677,6 +22659,12 @@
           "rank": 5,
           "price": 0.07811,
           "change": 16.36
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 5,
+          "price": 0.07911,
+          "change": 19.5
         }
       ],
       "total_duration": "10小时30分",
@@ -22687,11 +22675,11 @@
       "first_seen": "2026-10-03 19:16:04",
       "first_seen_price": 0.00925,
       "first_seen_change": 18.14,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.01044,
-      "current_change": 27.16,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.00996,
+      "current_change": 21.29,
       "best_rank": 1,
-      "appearances": 14,
+      "appearances": 15,
       "rank_history": [
         {
           "time": "2026-10-03 19:16:04",
@@ -22770,6 +22758,12 @@
           "rank": 1,
           "price": 0.01044,
           "change": 27.16
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 4,
+          "price": 0.00996,
+          "change": 21.29
         }
       ],
       "total_duration": "0分钟",
@@ -23005,11 +22999,11 @@
       "first_seen": "2026-10-03 21:15:59",
       "first_seen_price": 0.25456,
       "first_seen_change": 11.86,
-      "last_seen": "2026-10-03 22:15:59",
-      "current_price": 0.25819,
-      "current_change": 14.13,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.26003,
+      "current_change": 15.01,
       "best_rank": 6,
-      "appearances": 6,
+      "appearances": 7,
       "rank_history": [
         {
           "time": "2026-10-03 21:15:59",
@@ -23040,6 +23034,12 @@
           "rank": 6,
           "price": 0.25819,
           "change": 14.13
+        },
+        {
+          "time": "2026-10-03 22:30:59",
+          "rank": 8,
+          "price": 0.26003,
+          "change": 15.01
         }
       ],
       "total_duration": "1小时14分",
@@ -23108,97 +23108,31 @@
           "change": 12.89
         }
       ],
-      "total_duration": "0分钟",
-      "exited_time": "2026-10-03 20:01:18"
-    }
-  },
-  "last_update": "2026-10-03 22:15:59",
-  "history": [
-    {
-      "time": "2026-09-26 18:20:40",
-      "gainers": [
+      "total_duration": "1小时0分",
+      "exited_time": "2026-10-03 22:30:59"
+    },
+    "AIN": {
+      "symbol": "AIN",
+      "first_seen": "2026-10-03 22:30:59",
+      "first_seen_price": 0.02951,
+      "first_seen_change": 24.1,
+      "last_seen": "2026-10-03 22:30:59",
+      "current_price": 0.02951,
+      "current_change": 24.1,
+      "best_rank": 3,
+      "appearances": 1,
+      "rank_history": [
         {
-          "rank": 1,
-          "symbol": "PAID",
-          "price": 0.046734,
-          "change": 342.68,
-          "volume": "$1027.39万",
-          "exchange": "gate2"
-        },
-        {
-          "rank": 2,
-          "symbol": "BREW",
-          "price": 0.013251,
-          "change": 136.03,
-          "volume": "$800.64万",
-          "exchange": ""
-        },
-        {
+          "time": "2026-10-03 22:30:59",
           "rank": 3,
-          "symbol": "RARE",
-          "price": 0.02283,
-          "change": 72.77,
-          "volume": "$3.79亿",
-          "exchange": ""
-        },
-        {
-          "rank": 4,
-          "symbol": "FONE",
-          "price": 0.005879,
-          "change": 39.01,
-          "volume": "$109.91万",
-          "exchange": ""
-        },
-        {
-          "rank": 5,
-          "symbol": "2Z",
-          "price": 0.07449,
-          "change": 35.73,
-          "volume": "$1.68亿",
-          "exchange": ""
-        },
-        {
-          "rank": 6,
-          "symbol": "BATON",
-          "price": 0.00206,
-          "change": 31.66,
-          "volume": "$245.40万",
-          "exchange": "bingx"
-        },
-        {
-          "rank": 7,
-          "symbol": "PHA",
-          "price": 0.07865,
-          "change": 30.75,
-          "volume": "$20.86亿",
-          "exchange": ""
-        },
-        {
-          "rank": 8,
-          "symbol": "EYE",
-          "price": 0.0001284,
-          "change": 29.57,
-          "volume": "$85.73万",
-          "exchange": "bingx"
-        },
-        {
-          "rank": 9,
-          "symbol": "MUBARAK",
-          "price": 0.05517,
-          "change": 28.61,
-          "volume": "$3.73亿",
-          "exchange": ""
-        },
-        {
-          "rank": 10,
-          "symbol": "ORBIO",
-          "price": 0.06906,
-          "change": 26.74,
-          "volume": "$120.42万",
-          "exchange": ""
+          "price": 0.02951,
+          "change": 24.1
         }
       ]
-    },
+    }
+  },
+  "last_update": "2026-10-03 22:30:59",
+  "history": [
     {
       "time": "2026-09-26 18:31:06",
       "gainers": [
@@ -84313,9 +84247,110 @@
           "exchange": ""
         }
       ]
+    },
+    {
+      "time": "2026-10-03 22:30:59",
+      "gainers": [
+        {
+          "rank": 1,
+          "symbol": "龙虾",
+          "price": 0.04839,
+          "change": 37.89,
+          "volume": "$4.95亿",
+          "exchange": ""
+        },
+        {
+          "rank": 2,
+          "symbol": "LONGXIA",
+          "price": 0.0482,
+          "change": 37.61,
+          "volume": "$7386.60万",
+          "exchange": "bybit2"
+        },
+        {
+          "rank": 3,
+          "symbol": "AIN",
+          "price": 0.02951,
+          "change": 24.1,
+          "volume": "$1534.27万",
+          "exchange": ""
+        },
+        {
+          "rank": 4,
+          "symbol": "PUMPBTC",
+          "price": 0.00996,
+          "change": 21.29,
+          "volume": "$3657.69万",
+          "exchange": ""
+        },
+        {
+          "rank": 5,
+          "symbol": "VELVET",
+          "price": 0.07911,
+          "change": 19.5,
+          "volume": "$2.19亿",
+          "exchange": ""
+        },
+        {
+          "rank": 6,
+          "symbol": "JEANPHIL",
+          "price": 0.003031,
+          "change": 17.89,
+          "volume": "$102.13万",
+          "exchange": "bingx"
+        },
+        {
+          "rank": 7,
+          "symbol": "ONE",
+          "price": 0.0025239,
+          "change": 17.38,
+          "volume": "$1.69亿",
+          "exchange": ""
+        },
+        {
+          "rank": 8,
+          "symbol": "SUPER",
+          "price": 0.26003,
+          "change": 15.01,
+          "volume": "$4849.24万",
+          "exchange": ""
+        },
+        {
+          "rank": 9,
+          "symbol": "EVAA",
+          "price": 0.7792,
+          "change": 13.06,
+          "volume": "$7117.86万",
+          "exchange": ""
+        },
+        {
+          "rank": 10,
+          "symbol": "ATH",
+          "price": 0.007229,
+          "change": 12.32,
+          "volume": "$1.04亿",
+          "exchange": ""
+        }
+      ]
     }
   ],
   "exit_history": [
+    {
+      "symbol": "AGI",
+      "exited_time": "2026-10-03 22:30:59",
+      "total_duration": "0分钟",
+      "best_rank": 10,
+      "first_price": 0.007452,
+      "final_price": 0.007452
+    },
+    {
+      "symbol": "1000000BOB",
+      "exited_time": "2026-10-03 22:30:59",
+      "total_duration": "1小时0分",
+      "best_rank": 5,
+      "first_price": 0.01416,
+      "final_price": 0.01352
+    },
     {
       "symbol": "LYN",
       "exited_time": "2026-10-03 22:15:59",
@@ -84699,22 +84734,6 @@
       "best_rank": 8,
       "first_price": 0.002616,
       "final_price": 0.002596
-    },
-    {
-      "symbol": "BIGTIME",
-      "exited_time": "2026-10-03 12:31:42",
-      "total_duration": "0分钟",
-      "best_rank": 8,
-      "first_price": 0.010028,
-      "final_price": 0.010028
-    },
-    {
-      "symbol": "EVAA",
-      "exited_time": "2026-10-03 12:16:00",
-      "total_duration": "45分钟",
-      "best_rank": 8,
-      "first_price": 0.7538,
-      "final_price": 0.7606
     }
   ]
 }
